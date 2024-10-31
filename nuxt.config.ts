@@ -1,18 +1,23 @@
-import { pwa } from './app/config/pwa'
 import { appDescription } from './app/constants/index'
 
 export default defineNuxtConfig({
+
   modules: [
     '@vueuse/nuxt',
     '@unocss/nuxt',
     '@pinia/nuxt',
     '@nuxtjs/color-mode',
-    '@vite-pwa/nuxt',
     '@nuxt/eslint',
   ],
+  ssr: false,
+  imports: {
+    dirs: [
+      'composables/**',
+    ],
+  },
 
   devtools: {
-    enabled: true,
+    enabled: false,
   },
 
   app: {
@@ -36,7 +41,6 @@ export default defineNuxtConfig({
   css: [
     '@unocss/reset/tailwind.css',
   ],
-
   colorMode: {
     classSuffix: '',
   },
@@ -55,19 +59,6 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2024-08-14',
 
-  nitro: {
-    esbuild: {
-      options: {
-        target: 'esnext',
-      },
-    },
-    prerender: {
-      crawlLinks: false,
-      routes: ['/'],
-      ignore: ['/hi'],
-    },
-  },
-
   eslint: {
     config: {
       standalone: false,
@@ -77,5 +68,4 @@ export default defineNuxtConfig({
     },
   },
 
-  pwa,
 })
