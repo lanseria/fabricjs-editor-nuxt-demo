@@ -1,20 +1,14 @@
 <script lang="ts" setup>
-import { globalCanvas } from '#imports'
-import { fabric } from 'fabric'
+import { vElementSize } from '@vueuse/components'
 
-const CanvasRef = useTemplateRef('CanvasRef')
+const canvasRef = useTemplateRef('canvasRef')
+const wrapRef = useTemplateRef('wrapRef')
 
-onMounted(() => {
-  const value = new fabric.Canvas(CanvasRef.value, {
-    // 禁用多选
-    selection: false,
-    preserveObjectStacking: true,
-    fireRightClick: true, // 启用右键，button的数字为3
-    stopContextMenu: true, // 禁止默认右键菜单
-    controlsAboveOverlay: true, // 超出clipPath后仍然展示控制条
-  })
-  globalCanvas.value = value
-})
+function onResize({ width, height }: { width: number, height: number }) {
+  onFabricCanvasResize(width, height)
+}
+
+useFabricCanvas(canvasRef, wrapRef)
 </script>
 
 <template>
@@ -33,13 +27,13 @@ onMounted(() => {
       </div>
     </div>
     <div class="flex flex-1">
-      <div class="flex-1 bg-[#f1f1f1]">
-        <div class="relative h-full w-full">
+      <div class="shrink grow basis-0 overflow-hidden bg-[#f1f1f1]">
+        <div ref="wrapRef" v-element-size="onResize" class="relative h-full w-full">
           <div class="pointer-events-none absolute z-10 h-full w-full shadow-[inset_0_0_9px_2px_#0000001f]" />
-          <canvas ref="CanvasRef" />
+          <canvas ref="canvasRef" />
         </div>
       </div>
-      <div class="w-400px overflow-y-auto px-10px py-20px">
+      <div class="w-400px flex-none overflow-y-auto px-10px py-20px">
         2
       </div>
     </div>

@@ -15,7 +15,6 @@ export default defineNuxtConfig({
       'composables/**',
     ],
   },
-
   devtools: {
     enabled: false,
   },
@@ -42,7 +41,8 @@ export default defineNuxtConfig({
     '@unocss/reset/tailwind.css',
   ],
   colorMode: {
-    classSuffix: '',
+    preference: 'light',
+    fallback: 'light',
   },
 
   future: {
@@ -58,6 +58,13 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2024-08-14',
+  vite: {
+    optimizeDeps: {
+      include: [
+        'fabric',
+      ],
+    },
+  },
 
   eslint: {
     config: {

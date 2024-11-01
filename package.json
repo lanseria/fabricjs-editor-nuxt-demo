@@ -23,6 +23,7 @@
     "@types/fabric": "^5.3.9",
     "@unocss/eslint-config": "^0.63.6",
     "@unocss/nuxt": "^0.63.6",
+    "@vueuse/components": "^11.2.0",
     "@vueuse/nuxt": "^11.1.0",
     "consola": "^3.2.3",
     "eslint": "^9.13.0",
