@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { vElementSize } from '@vueuse/components'
+import Setting from './Setting.vue'
+import WorkspaceSize from './WorkspaceSize.vue'
 
 const canvasRef = useTemplateRef('canvasRef')
 const wrapRef = useTemplateRef('wrapRef')
@@ -18,12 +20,12 @@ useFabricCanvas(canvasRef, wrapRef)
         证书设计
       </div>
       <div class="flex gap-2">
-        <div class="btn">
+        <button class="btn">
           预览
-        </div>
-        <div class="btn">
+        </button>
+        <button class="btn">
           导出
-        </div>
+        </button>
       </div>
     </div>
     <div class="flex flex-1">
@@ -34,7 +36,21 @@ useFabricCanvas(canvasRef, wrapRef)
         </div>
       </div>
       <div class="w-400px flex-none overflow-y-auto px-10px py-20px">
-        2
+        <div>
+          <div class="text-14px text-dark font-bold">
+            画布大小
+          </div>
+          <div class="h-10px w-full" />
+          <WorkspaceSize />
+        </div>
+        <div class="my-20px h-1px w-full bg-[#f1f1f1]" />
+        <div>
+          <div class="text-14px text-dark font-bold">
+            设置证书
+          </div>
+          <div class="h-10px w-full" />
+          <Setting />
+        </div>
       </div>
     </div>
   </div>

@@ -1,41 +1,58 @@
 import { fabric } from 'fabric'
 
-export function utilFabricImageDraw(
-  ctx: CanvasRenderingContext2D,
-  left: number,
-  top: number,
-  img: HTMLImageElement,
-  wSize: number,
-  hSize: number,
-  angle: number | undefined,
-) {
-  if (angle === undefined)
-    return
-  ctx.save()
-  ctx.translate(left, top)
-  ctx.rotate(fabric.util.degreesToRadians(angle))
-  ctx.drawImage(img, -wSize / 2, -hSize / 2, wSize, hSize)
-  ctx.restore()
+export function utilFabricGetCanvasInstance() {
+  if (!fabricCanvas.value) {
+    throw new Error('fabricCanvas.value is null')
+  }
+  const canvas = fabricCanvas.value
+  return canvas
 }
 
+export function utilFabricGetWorkspaceInstance() {
+  const canvas = utilFabricGetCanvasInstance()
+  const workspace = canvas.getObjects().find(item => item.name === WORKSPACE_ID)
+  if (!workspace)
+    throw new Error('workspace is null')
+  return {
+    canvas,
+    workspace,
+  }
+}
+
+// export function utilFabricImageDraw(
+//   ctx: CanvasRenderingContext2D,
+//   left: number,
+//   top: number,
+//   img: HTMLImageElement,
+//   wSize: number,
+//   hSize: number,
+//   angle: number | undefined,
+// ) {
+//   if (angle === undefined)
+//     return
+//   ctx.save()
+//   ctx.translate(left, top)
+//   ctx.rotate(fabric.util.degreesToRadians(angle))
+//   ctx.drawImage(img, -wSize / 2, -hSize / 2, wSize, hSize)
+//   ctx.restore()
+// }
+
 export function utilFabricGetWorkspaceScale() {
-  // 按照宽度
+  // 容器宽度
   const wrapWidth = fabricCanvasWrapSize.value.width
   const wrapHeight = fabricCanvasWrapSize.value.height
-  if (wrapWidth / wrapHeight < WORKSPACE_WIDTH / WORKSPACE_HEIGHT) {
-    // console.warn('[canvas.ts]:', '按照宽度缩放', wrapWidth, WORKSPACE_WIDTH)
-    const scale = wrapWidth / WORKSPACE_WIDTH
-    // console.warn('[canvas.ts]:', 'scale', scale)
-    // 1000 50 0.1
-    // 4000 200 0.1
-    // 4000 50 0.025
-    const subScale = 0.1 / (WORKSPACE_WIDTH / 1000)
+  const { width, height } = fabricCanvasWorkspaceSize.value
+  if (wrapWidth / wrapHeight < width / height) {
+    console.warn('[util.ts]:', '按照宽度缩放', wrapWidth, width)
+    const scale = wrapWidth / width
+    console.warn('[util.ts]:', 'scale', scale)
+    const subScale = 0.1 / (width / 1000)
     return scale - subScale
   }
   else {
     // 按照高度缩放
-    const scale = wrapHeight / WORKSPACE_HEIGHT
-    const subScale = 0.1 / (WORKSPACE_HEIGHT / 1000)
+    const scale = wrapHeight / height
+    const subScale = 0.1 / (height / 1000)
     return scale - subScale
   }
 }
@@ -43,48 +60,38 @@ export function utilFabricGetWorkspaceScale() {
  * 设置Canvas大小，根据wrap
  */
 export function utilFabricSetCanvasSize() {
-  if (!fabricCanvas.value)
-    return
-  const canvas = fabricCanvas.value
+  const canvas = utilFabricGetCanvasInstance()
   const wrapWidth = fabricCanvasWrapSize.value.width
   const wrapHeight = fabricCanvasWrapSize.value.height
   canvas.setWidth(wrapWidth)
   canvas.setHeight(wrapHeight)
+  console.warn('[util.ts]:', '设置Canvas大小', wrapWidth, wrapHeight)
 }
 /**
  * 设置Canvas缩放
  */
 export function utilFabricSetCanvasZoom(scale: number) {
-  if (!fabricCanvas.value)
-    return
-  const canvas = fabricCanvas.value
+  const canvas = utilFabricGetCanvasInstance()
   const center = canvas.getCenter()
   canvas.setViewportTransform(fabric.iMatrix.concat())
   canvas.zoomToPoint(new fabric.Point(center.left, center.top), scale)
+  console.warn('[util.ts]:', '设置Canvas缩放', scale)
 }
 /**
  * 设置画布大小
  */
 function utilFabricSetWorkspaceSize() {
-  if (!fabricCanvas.value)
-    return
-  const canvas = fabricCanvas.value
-  const workspace = canvas.getObjects().find(item => item.id === WORKSPACE_ID)
-  if (!workspace)
-    return
-  workspace.set('width', WORKSPACE_WIDTH)
-  workspace.set('height', WORKSPACE_HEIGHT)
+  const { workspace } = utilFabricGetWorkspaceInstance()
+  const { height, width } = fabricCanvasWorkspaceSize.value
+  workspace.set('width', width)
+  workspace.set('height', height)
+  console.warn('[util.ts]:', '设置画布大小', width, height)
 }
 /**
  * 设置画布中心到指定对象中心点上
  */
 function utilFabricSetWorkspaceCenter() {
-  if (!fabricCanvas.value)
-    return
-  const canvas = fabricCanvas.value
-  const workspace = canvas.getObjects().find(item => item.id === WORKSPACE_ID)
-  if (!workspace)
-    return
+  const { workspace, canvas } = utilFabricGetWorkspaceInstance()
   const objCenter = workspace.getCenterPoint()
   const viewportTransform = canvas.viewportTransform
   if (canvas.width === undefined || canvas.height === undefined || !viewportTransform)
@@ -93,21 +100,18 @@ function utilFabricSetWorkspaceCenter() {
   viewportTransform[5] = canvas.height / 2 - objCenter.y * viewportTransform[3]!
   canvas.setViewportTransform(viewportTransform)
   canvas.renderAll()
+  console.warn('[util.ts]:', '设置画布中心到指定对象中心点上')
 }
 /**
  * 超出workspace画布不展示
  */
 function utilFabricFlipWorkspace() {
-  if (!fabricCanvas.value)
-    return
-  const canvas = fabricCanvas.value
-  const workspace = canvas.getObjects().find(item => item.id === WORKSPACE_ID)
-  if (!workspace)
-    return
+  const { workspace, canvas } = utilFabricGetWorkspaceInstance()
   workspace.clone((cloned: fabric.Rect) => {
     canvas.clipPath = cloned
     canvas.requestRenderAll()
   })
+  console.warn('[util.ts]:', '超出workspace画布不展示')
 }
 /**
  * 整体设置缩放
