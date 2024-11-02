@@ -1,9 +1,12 @@
 <script lang="ts" setup>
 const { loadFont } = useFont()
 
-async function onChange(key: keyof fabric.Object, val: any) {
+async function onChange(key: keyof fabric.Object, e: Event) {
   const canvas = utilFabricGetCanvasInstance()
   if (key === 'fontFamily') {
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-expect-error
+    const val: string = e.target!.value
     if (await loadFont(val)) {
       const activeObject = canvas.getActiveObject()!
       if (activeObject)
@@ -11,10 +14,22 @@ async function onChange(key: keyof fabric.Object, val: any) {
       canvas.renderAll()
     }
   }
-  else {
+  else if (key === 'fill') {
     const activeObject = canvas.getActiveObject()!
-    if (activeObject)
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-expect-error
+    const val: string = e.target!.value
+    if (activeObject && val)
       activeObject.set(key, val)
+    canvas.renderAll()
+  }
+  else if (key === 'fontSize') {
+    const activeObject = canvas.getActiveObject()!
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-expect-error
+    const val: string = e.target!.value
+    if (activeObject && val)
+      activeObject.set(key, +val)
     canvas.renderAll()
   }
 }
@@ -25,20 +40,36 @@ async function onChange(key: keyof fabric.Object, val: any) {
     <div class="flex items-center gap-10px">
       <div class="w-80px flex-none">
         颜色：
-      </div>
-      <AColorPicker v-model:model-value="fabricCanvasActiveObjProps.fill" format="rgb" show-text disabled-alpha @change="onChange('fill', $event)" />
+      </div><input
+        type="color"
+        :value="fabricCanvasActiveObjProps.fill"
+        @input="onChange('fill', $event)"
+      >
     </div>
     <div class="flex items-center gap-10px">
       <div class="w-80px flex-none">
         字体大小：
       </div>
-      <AInputNumber v-model:model-value="fabricCanvasActiveObjProps.fontSize" @change="onChange('fontSize', $event)" />
+      <input
+        type="number"
+        class="ipt"
+        :value="fabricCanvasActiveObjProps.fontSize"
+        @input="onChange('fontSize', $event)"
+      >
     </div>
     <div class="flex items-center gap-10px">
       <div class="w-80px flex-none">
         字体：
       </div>
-      <ASelect v-model:model-value="fabricCanvasActiveObjProps.fontFamily" :options="FONT_LIST" :field-names="{ label: 'name', value: 'fontFamily' }" @change="onChange('fontFamily', $event)" />
+      <select
+        class="slt"
+        :value="fabricCanvasActiveObjProps.fontFamily"
+        @change="onChange('fontFamily', $event)"
+      >
+        <option v-for="font in FONT_LIST" :key="font.fontFamily" :value="font.fontFamily">
+          {{ font.name }}
+        </option>
+      </select>
     </div>
   </div>
 </template>
