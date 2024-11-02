@@ -14,3 +14,25 @@ export const fabricCanvasWorkspaceLoaded = ref(false)
 export const fabricCanvasWrapSize = useLocalStorage('fabricCanvasWrapSize', { width: 0, height: 0 })
 // workspace size
 export const fabricCanvasWorkspaceSize = ref({ width: WORKSPACE_WIDTH, height: WORKSPACE_HEIGHT })
+
+export const fabricCanvasActiveObj = ref<fabric.Object>()
+
+export const fabricCanvasActiveObjProps = ref<CanvasElementObjectProps>(initCanvasElementObjectProps())
+
+// dynamic text element with disabled field
+export const dynamicTextElementList = computed(() => {
+  const elementIds = ELEMENT_LIST.map(m => m.id)
+
+  if (!fabricCanvas.value) {
+    return ELEMENT_LIST.map(item => ({ ...item, disabled: false }))
+  }
+
+  const activeIds = fabricCanvas.value.getObjects()
+    .filter(item => elementIds.includes(item.id!))
+    .map(item => item.id)
+
+  return ELEMENT_LIST.map(item => ({
+    ...item,
+    disabled: activeIds.includes(item.id),
+  }))
+})

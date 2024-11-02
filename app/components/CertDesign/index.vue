@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { vElementSize } from '@vueuse/components'
+import DynamicTextSelect from './DynamicTextSelect.vue'
+import ElementProps from './ElementProps.vue'
 import Setting from './Setting.vue'
 import WorkspaceSize from './WorkspaceSize.vue'
 
@@ -51,7 +53,51 @@ useFabricCanvas(canvasRef, wrapRef)
           <div class="h-10px w-full" />
           <Setting />
         </div>
+        <div class="my-20px h-1px w-full bg-[#f1f1f1]" />
+        <div>
+          <div class="text-14px text-dark font-bold">
+            {{ GROUP_TYPE[0] }}
+          </div>
+          <div class="h-10px w-full" />
+          <DynamicTextSelect :group-type="0" />
+        </div>
+        <div class="my-20px h-1px w-full bg-[#f1f1f1]" />
+        <div>
+          <div class="text-14px text-dark font-bold">
+            {{ GROUP_TYPE[1] }}
+          </div>
+          <div class="h-10px w-full" />
+          <DynamicTextSelect :group-type="1" />
+        </div>
+        <div class="my-20px h-1px w-full bg-[#f1f1f1]" />
+        <div>
+          <div class="text-14px text-dark font-bold">
+            {{ GROUP_TYPE[2] }}
+          </div>
+          <div class="h-10px w-full" />
+          <DynamicTextSelect :group-type="2" />
+        </div>
+        <div class="my-20px h-1px w-full bg-[#f1f1f1]" />
+        <div>
+          <div class="text-14px text-dark font-bold">
+            元素属性
+          </div>
+          <div class="h-10px w-full" />
+          <ElementProps />
+        </div>
       </div>
     </div>
   </div>
 </template>
+
+<style lang="css" scoped>
+@font-face {
+  font-family: '思源黑体';
+  src: url('/fonts/SourceHanSansCN-Regular.otf');
+}
+
+@font-face {
+  font-family: '思源宋体';
+  src: url('/fonts/SourceHanSerifCN-Regular.ttf');
+}
+</style>

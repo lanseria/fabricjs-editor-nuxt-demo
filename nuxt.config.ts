@@ -62,6 +62,8 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: [
         'fabric',
+        'fontfaceobserver',
+        'nanoid',
       ],
     },
   },

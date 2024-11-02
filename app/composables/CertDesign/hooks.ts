@@ -1,4 +1,5 @@
 import type { ShallowRef } from 'vue'
+import FontFaceObserver from 'fontfaceobserver'
 
 export function useFabricCanvas(canvasRef: ShallowRef<HTMLCanvasElement | null>, wrapRef: ShallowRef<HTMLDivElement | null>) {
   const { width, height } = useElementSize(wrapRef)
@@ -25,4 +26,31 @@ export function useFabricCanvas(canvasRef: ShallowRef<HTMLCanvasElement | null>,
       fabricCanvas.value.dispose()
     }
   })
+}
+
+export function useFont() {
+  const loadFont = (fontName: string) => {
+    if (!fontName)
+      return false
+    return new Promise((resolve: any) => {
+      // loading
+      const font = new FontFaceObserver(fontName)
+      font
+        .load(null, 150000)
+        .then(() => {
+          console.warn('字体加载成功')
+          // loading hide
+          resolve(true)
+        })
+        .catch(() => {
+          console.error('字体加载失败')
+          // loading hide
+          resolve(false)
+        })
+    })
+  }
+
+  return {
+    loadFont,
+  }
 }
