@@ -8,10 +8,22 @@ import WorkspaceSize from './WorkspaceSize.vue'
 const canvasRef = useTemplateRef('canvasRef')
 const wrapRef = useTemplateRef('wrapRef')
 
+const showPreview = ref(false)
+const images = ref<string[]>([])
 function onResize({ width, height }: { width: number, height: number }) {
   onFabricCanvasResize(width, height)
 }
-
+async function onFabricCanvasPreview() {
+  const { url } = utilFabricCanvasToImageOption()
+  await onFabricCanvasWorkspaceResize()
+  images.value = [url]
+  showPreview.value = true
+}
+async function onFabricCanvasExport() {
+  const options = await utilFabricGetCanvasExportOption()
+  await onFabricCanvasWorkspaceResize()
+  console.warn(options)
+}
 useFabricCanvas(canvasRef, wrapRef)
 </script>
 
@@ -22,10 +34,10 @@ useFabricCanvas(canvasRef, wrapRef)
         证书设计
       </div>
       <div class="flex gap-2">
-        <button class="btn">
+        <button class="btn" @click="onFabricCanvasPreview()">
           预览
         </button>
-        <button class="btn">
+        <button class="btn" @click="onFabricCanvasExport()">
           导出
         </button>
       </div>
@@ -87,6 +99,11 @@ useFabricCanvas(canvasRef, wrapRef)
         </div>
       </div>
     </div>
+    <ImagePreview
+      v-model:visible="showPreview"
+      :images="images"
+      :initial-index="0"
+    />
   </div>
 </template>
 

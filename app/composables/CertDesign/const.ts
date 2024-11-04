@@ -36,7 +36,14 @@ export const DEFAULT_TEXT_OPTIONS = {
   originX: 'left',
   originY: 'bottom',
 }
-
+/**
+ * 预览图片配置
+ */
+export const PREVIEW_URL_OPTIONS = {
+  format: 'png',
+  quality: 0.8,
+  multiplier: 1,
+}
 /**
  * 默认文本颜色
  */

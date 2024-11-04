@@ -129,7 +129,9 @@ export function utilFabricSetWorkspaceZoom(scale: number) {
   // 超出workspace画布不展示
   utilFabricFlipWorkspace()
 }
-
+/**
+ * 加载字体
+ */
 export async function utilFabricLoadFont(fontName: string): Promise<boolean> {
   if (!fontName)
     return false
@@ -145,5 +147,101 @@ export async function utilFabricLoadFont(fontName: string): Promise<boolean> {
   catch (error: any) {
     console.error('字体加载失败')
     throw new Error(error)
+  }
+}
+
+function isValidBase64(base64: string): boolean {
+  // 检查是否包含前缀 "data:[mime-type];base64,"
+  const regex = /^data:(.+);base64,/
+  const matches = base64.match(regex)
+
+  // 如果包含前缀，提取 Base64 数据部分
+  const base64Data = matches ? base64.replace(regex, '') : base64
+
+  // 验证 Base64 数据部分是否只包含有效的字符（A-Z, a-z, 0-9, +, /, =）
+  const base64Regex = /^[A-Z0-9+/]+={0,2}$/i
+  return base64Regex.test(base64Data)
+}
+
+function base64ToFile(base64: string, fileName: string): File {
+  if (!isValidBase64(base64)) {
+    throw new Error('Invalid base64 string')
+  }
+  const arr = base64.split(',')
+  const mime = arr[0]!.match(/:(.*?);/)?.[1] || ''
+  const bstr = atob(arr[1]!)
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+
+  return new File([u8arr], fileName, { type: mime })
+}
+/**
+ * 获取Canvas截图
+ */
+export function utilFabricCanvasToImageOption() {
+  const { workspace, canvas } = utilFabricGetWorkspaceInstance()
+  const { width, height, left, top } = workspace
+  const options = {
+    ...PREVIEW_URL_OPTIONS,
+    width,
+    height,
+    left,
+    top,
+  }
+  canvas.setViewportTransform([1, 0, 0, 1, 0, 0])
+  canvas.renderAll()
+  const url = canvas.toDataURL(options)
+  const file = base64ToFile(url, 'image.png')
+  return {
+    url,
+    file,
+  }
+}
+/**
+ * 获取Canvas导出配置
+ */
+export async function utilFabricGetCanvasExportOption() {
+  const { workspace, canvas } = utilFabricGetWorkspaceInstance()
+  const workspaceLeft = workspace.left!
+  const workspaceTop = workspace.top!
+  const elementList: CanvasElementObjectProps[] = []
+  canvas.getObjects().forEach((item) => {
+    if (item.id !== WORKSPACE_ID && item.id !== BACKGROUND_ID) {
+      item.visible = false
+      // 如果为自定义字符串，则使用text字段
+      const value = item.type === 'i-text' ? item.text ?? '' : item.name ?? ''
+      elementList.push({
+        url: item.url || '',
+        id: item.id!,
+        value,
+        left: item.left! - workspaceLeft,
+        top: item.top! - workspaceTop,
+        scaleX: item.scaleX!,
+        scaleY: item.scaleY!,
+        type: item.type!,
+        fill: item.fill as string,
+        fontSize: item.fontSize as number,
+        fontFamily: item.fontFamily as string,
+      })
+    }
+  })
+  canvas.setViewportTransform([1, 0, 0, 1, 0, 0])
+  canvas.renderAll()
+  const { url } = await utilFabricCanvasToImageOption()
+  const backgroundImageBase64 = url
+
+  canvas.getObjects().forEach((item) => {
+    if (item.id !== WORKSPACE_ID && item.id !== BACKGROUND_ID)
+      item.visible = true
+  })
+  return {
+    elementList,
+    backgroundImageBase64,
+    width: fabricCanvasWorkspaceSize.value.width,
+    height: fabricCanvasWorkspaceSize.value.height,
   }
 }
