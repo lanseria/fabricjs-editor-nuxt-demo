@@ -19,6 +19,7 @@ export function useFabricCanvas(canvasRef: ShallowRef<HTMLCanvasElement | null>,
     initFabricDeleteControl()
     // 设置初始化成功标识
     fabricCanvasWorkspaceLoaded.value = true
+    fabricCanvasActiveObjProps.value = initCanvasElementObjectProps()
   }
   onMounted(() => {
     // 初始化Canvas
