@@ -150,23 +150,7 @@ export async function utilFabricLoadFont(fontName: string): Promise<boolean> {
   }
 }
 
-function isValidBase64(base64: string): boolean {
-  // 检查是否包含前缀 "data:[mime-type];base64,"
-  const regex = /^data:(.+);base64,/
-  const matches = base64.match(regex)
-
-  // 如果包含前缀，提取 Base64 数据部分
-  const base64Data = matches ? base64.replace(regex, '') : base64
-
-  // 验证 Base64 数据部分是否只包含有效的字符（A-Z, a-z, 0-9, +, /, =）
-  const base64Regex = /^[A-Z0-9+/]+={0,2}$/i
-  return base64Regex.test(base64Data)
-}
-
 function base64ToFile(base64: string, fileName: string): File {
-  if (!isValidBase64(base64)) {
-    throw new Error('Invalid base64 string')
-  }
   const arr = base64.split(',')
   const mime = arr[0]!.match(/:(.*?);/)?.[1] || ''
   const bstr = atob(arr[1]!)

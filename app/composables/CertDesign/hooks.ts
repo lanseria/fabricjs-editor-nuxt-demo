@@ -2,7 +2,24 @@ import type { ShallowRef } from 'vue'
 
 export function useFabricCanvas(canvasRef: ShallowRef<HTMLCanvasElement | null>, wrapRef: ShallowRef<HTMLDivElement | null>) {
   const { width, height } = useElementSize(wrapRef)
+  function onFabricCanvasReset() {
+    // 移除所有元素和背景图，释放资源
+    fabricCanvasWorkspaceLoaded.value = false
+    if (fabricCanvas.value) {
+      fabricCanvas.value.dispose()
+    }
 
+    // 初始化Canvas
+    initFabricCanvas(canvasRef)
+    // 初始化工作区
+    initFabricWorkspace()
+    // 根据 Wrap 大小设置 Canvas 大小
+    onFabricCanvasResize(width.value, height.value)
+    // 添加控件
+    initFabricDeleteControl()
+    // 设置初始化成功标识
+    fabricCanvasWorkspaceLoaded.value = true
+  }
   onMounted(() => {
     // 初始化Canvas
     initFabricCanvas(canvasRef)
@@ -25,4 +42,7 @@ export function useFabricCanvas(canvasRef: ShallowRef<HTMLCanvasElement | null>,
       fabricCanvas.value.dispose()
     }
   })
+  return {
+    onFabricCanvasReset,
+  }
 }

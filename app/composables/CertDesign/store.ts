@@ -38,3 +38,15 @@ export const dynamicTextElementList = computed(() => {
     disabled: activeIds.includes(item.id),
   }))
 })
+
+export const fabricExportData = useLocalStorage<{
+  elementList: CanvasElementObjectProps[]
+  backgroundImageBase64: string
+  width: number
+  height: number
+}>('fabricExportData', {
+  elementList: [],
+  backgroundImageBase64: '',
+  width: 0,
+  height: 0,
+})

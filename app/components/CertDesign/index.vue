@@ -23,8 +23,37 @@ async function onFabricCanvasExport() {
   const options = await utilFabricGetCanvasExportOption()
   await onFabricCanvasWorkspaceResize()
   console.warn(options)
+  fabricExportData.value = options
 }
-useFabricCanvas(canvasRef, wrapRef)
+async function onFabricCanvasImport() {
+  const data = fabricExportData.value
+  fabricCanvasWorkspaceSize.value.width = data.width
+  fabricCanvasWorkspaceSize.value.height = data.height
+  const canvasElementList = data.elementList
+  const canvasBackgroundImageBase64 = data.backgroundImageBase64
+  // 1. 已经自动设置了画布的宽高
+  // 2. 手动设置背景图片
+  setTimeout(async () => {
+    if (canvasBackgroundImageBase64) {
+      const url = canvasBackgroundImageBase64
+      onFabricSetBackground(url)
+    }
+    // 3. 设置二维码图片,先将图片排序到最前面
+    const sortElementList = canvasElementList.sort((a, b) => {
+      if (a.type === 'image' && b.type === 'text')
+        return -1 // image 放前面
+      else if (a.type === 'text' && b.type === 'image')
+        return 1 // text 放后面
+      else
+        return 0 // 保持原顺序
+    })
+    console.warn('[handleSetData]:', sortElementList)
+    for await (const element of sortElementList)
+      await onAddDynamicText(element)
+  }, 1000)
+}
+
+const { onFabricCanvasReset } = useFabricCanvas(canvasRef, wrapRef)
 </script>
 
 <template>
@@ -34,11 +63,17 @@ useFabricCanvas(canvasRef, wrapRef)
         证书设计
       </div>
       <div class="flex gap-2">
+        <button class="btn" @click="onFabricCanvasReset()">
+          重置
+        </button>
         <button class="btn" @click="onFabricCanvasPreview()">
           预览
         </button>
         <button class="btn" @click="onFabricCanvasExport()">
           导出
+        </button>
+        <button class="btn" @click="onFabricCanvasImport()">
+          导入
         </button>
       </div>
     </div>

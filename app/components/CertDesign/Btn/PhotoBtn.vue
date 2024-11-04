@@ -12,7 +12,6 @@ onChange((files) => {
     if (filesList.length !== 0) {
       const file = filesList[0]
       const url = useObjectUrl(file)
-      // console.log(url.value)
       onFabricAddPhoto(url.value!)
     }
   }

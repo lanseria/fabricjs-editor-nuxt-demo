@@ -208,6 +208,7 @@ export function onFabricAddPhoto(url: string): Promise<fabric.Image> {
         img.set({
           id: `${CUSTOM_IMAGE_ID_PREFIX}${id}`,
           name: `${CUSTOM_IMAGE_ID_PREFIX}${id}`,
+          url,
           left: workspace.left! + (workspace.width! / 2) - (img.width! * scaleRatio) / 2, // left
           top: workspace.top! + (workspace.height! / 2) + (img.height! * scaleRatio) / 2, // bottom
           scaleX: scaleRatio,
@@ -280,11 +281,16 @@ export function onAddDynamicText(record: CanvasObjects) {
     else if (record.type === 'image') {
       let IMAGE_URL = ''
       // 内置固定图片
-      if (CERT_IMAGE_TYPES.includes(record.id))
+      if (CERT_IMAGE_TYPES.includes(record.id)) {
         IMAGE_URL = CERT_IMAGE_MAP[record.id as keyof typeof CERT_IMAGE_MAP]
+      }
       // 自定义图片 CUSTOM_IMAGE_
-      else
-        IMAGE_URL = record.url ?? ''
+      else if (record.url) {
+        IMAGE_URL = record.url // blob url
+      }
+      else {
+        throw new Error('url is null')
+      }
       fabric.Image.fromURL(IMAGE_URL, (imgInstance) => {
         canvas.add(imgInstance.set({
           left: workspace.left! + (record.left ?? workspace.width! / 2), // left
