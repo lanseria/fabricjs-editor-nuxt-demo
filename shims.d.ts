@@ -13,3 +13,8 @@ declare global {
     }
   }
 }
+
+interface PolygonDrawnEvent {
+  polygon: fabric.Polygon
+  points: { x: number, y: number }[]
+}

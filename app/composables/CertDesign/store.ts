@@ -14,3 +14,7 @@ export const fabricCanvasWorkspaceLoaded = ref(false)
 export const fabricCanvasWrapSize = useLocalStorage('fabricCanvasWrapSize', { width: 0, height: 0 })
 // workspace size
 export const fabricCanvasWorkspaceSize = ref({ width: WORKSPACE_WIDTH, height: WORKSPACE_HEIGHT })
+
+// State for polygon drawing
+export const isDrawingMode = ref(false)
+export const points: fabric.Point[] = []

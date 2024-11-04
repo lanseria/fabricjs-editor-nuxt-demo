@@ -2,8 +2,13 @@ import type { ShallowRef } from 'vue'
 
 export function useFabricCanvas(canvasRef: ShallowRef<HTMLCanvasElement | null>, wrapRef: ShallowRef<HTMLDivElement | null>) {
   const { width, height } = useElementSize(wrapRef)
+  function onFabricCanvasReset() {
+    // 移除所有元素和背景图，释放资源
+    fabricCanvasWorkspaceLoaded.value = false
+    if (fabricCanvas.value) {
+      fabricCanvas.value.dispose()
+    }
 
-  onMounted(() => {
     // 初始化Canvas
     initFabricCanvas(canvasRef)
     // 初始化工作区
@@ -14,15 +19,22 @@ export function useFabricCanvas(canvasRef: ShallowRef<HTMLCanvasElement | null>,
     initFabricDeleteControl()
     // 设置初始化成功标识
     fabricCanvasWorkspaceLoaded.value = true
-    // 工作区自动缩放
-    // onFabricCanvasWorkspaceResize()
+
+    initPolygonDrawing()
+  }
+  onMounted(() => {
+    onFabricCanvasReset()
   })
 
   onBeforeUnmount(() => {
   // 移除所有元素和背景图，释放资源
     fabricCanvasWorkspaceLoaded.value = false
+    destroyPolygonDrawing()
     if (fabricCanvas.value) {
       fabricCanvas.value.dispose()
     }
   })
+  return {
+    onFabricCanvasReset,
+  }
 }

@@ -154,38 +154,164 @@ export function onFabricSetBackground(url: string): Promise<fabric.Image> {
     })
   })
 }
+// 已知 我写了 添加背景图片功能，根据我下面的代码，添加绘制多边形的功能，我用的是vue3
+// 用fabric.js@5 实现一个绘制多边形功能，具体：点击绘制按钮后，将在画布上绘制多边形，双击结束绘制，并创建完成一个多边形并触发一个事件
 
-export function onFabricAddPhoto(url: string): Promise<fabric.Image> {
-  return new Promise((resolve, reject) => {
-    fabric.Image.fromURL(url, async (img) => {
-      if (img) {
-        const { canvas, workspace } = utilFabricGetWorkspaceInstance()
-        const id = nanoid(4) // 计算图像应该缩放的比例,使其完全显示在画布中
-        const { width, height } = fabricCanvasWorkspaceSize.value
-        const scaleRatio = Math.min(width / img.width!, height / img.height!) * 0.8
-        img.set({
-          name: `PHOTO_${id}`,
-          left: workspace.left! + (workspace.width! / 2) - (img.width! * scaleRatio) / 2, // left
-          top: workspace.top! + (workspace.height! / 2) + (img.height! * scaleRatio) / 2, // bottom
-          scaleX: scaleRatio,
-          scaleY: scaleRatio,
-          ...DEFAULT_IMAGE_OPTIONS,
-        })
-        console.warn('[util.ts]:', '添加图片', url, img)
-        canvas.add(img)
-        // 先放置在最底层
-        canvas.sendToBack(img)
-        // 再向上移动两层
-        canvas.bringForward(img, false)
-        canvas.bringForward(img, false)
-        canvas.setActiveObject(img)
-        canvas.renderAll()
-        triggerRef(fabricCanvas)
-        resolve(img)
-      }
-      else {
-        reject(new Error('img is null'))
-      }
-    })
+let lineObjects: fabric.Line[] = []
+let activePolygon: fabric.Polygon | null = null
+
+export function initPolygonDrawing() {
+  const canvas = utilFabricGetCanvasInstance()
+
+  // Initialize canvas event handlers for polygon drawing
+  canvas.on('mouse:down', onMouseDown)
+  canvas.on('mouse:move', onMouseMove)
+  canvas.on('mouse:dblclick', onDoubleClick)
+}
+
+export function startPolygonDrawing() {
+  const canvas = utilFabricGetCanvasInstance()
+  isDrawingMode.value = true
+  canvas.selection = false
+  canvas.defaultCursor = 'crosshair'
+  points.length = 0
+  lineObjects.forEach(line => canvas.remove(line))
+  lineObjects = []
+  if (activePolygon) {
+    canvas.remove(activePolygon)
+    activePolygon = null
+  }
+}
+
+export function stopPolygonDrawing() {
+  const canvas = utilFabricGetCanvasInstance()
+  isDrawingMode.value = false
+  canvas.selection = true
+  canvas.defaultCursor = 'default'
+  points.length = 0
+  lineObjects.forEach(line => canvas.remove(line))
+  lineObjects = []
+  if (activePolygon) {
+    canvas.remove(activePolygon)
+    activePolygon = null
+  }
+  canvas.renderAll()
+}
+
+function onMouseDown(event: fabric.IEvent) {
+  if (!isDrawingMode.value || !event.pointer)
+    return
+
+  const canvas = utilFabricGetCanvasInstance()
+  const pointer = canvas.getPointer(event.e)
+  const { x, y } = pointer
+
+  // Add point to array
+  points.push(new fabric.Point(x, y))
+
+  // Draw point marker
+  const point = new fabric.Circle({
+    left: x - 2,
+    top: y - 2,
+    radius: 2,
+    fill: '#ff0000',
+    selectable: false,
+    evented: false,
+    name: 'point',
   })
+
+  canvas.add(point)
+
+  // If we have more than one point, draw line
+  if (points.length > 1) {
+    const p1 = points[points.length - 2]
+    const p2 = points[points.length - 1]
+
+    const line = new fabric.Line([p1!.x, p1!.y, p2!.x, p2!.y], {
+      stroke: '#999999',
+      strokeWidth: 2,
+      selectable: false,
+      evented: false,
+    })
+
+    lineObjects.push(line)
+    canvas.add(line)
+  }
+
+  canvas.renderAll()
+}
+
+function onMouseMove(event: fabric.IEvent) {
+  if (!isDrawingMode.value || points.length === 0 || !event.pointer)
+    return
+
+  const canvas = utilFabricGetCanvasInstance()
+  const pointer = canvas.getPointer(event.e)
+
+  // Remove the last temporary line if it exists
+  if (activePolygon) {
+    canvas.remove(activePolygon)
+  }
+
+  // Create temporary polygon
+  const tempPoints = [...points, new fabric.Point(pointer.x, pointer.y)]
+  activePolygon = new fabric.Polygon(tempPoints, {
+    fill: 'rgba(0,0,0,0.1)',
+    stroke: '#999999',
+    strokeWidth: 2,
+    selectable: false,
+    evented: false,
+  })
+
+  canvas.add(activePolygon)
+  canvas.renderAll()
+}
+
+function onDoubleClick(_event: fabric.IEvent) {
+  if (!isDrawingMode.value || points.length < 3)
+    return
+
+  const canvas = utilFabricGetCanvasInstance()
+
+  // Remove all temporary drawing objects
+  lineObjects.forEach(line => canvas.remove(line))
+  if (activePolygon) {
+    canvas.remove(activePolygon)
+  }
+
+  // Create final polygon
+  const polygon = new fabric.Polygon(points, {
+    fill: 'rgba(0,0,0,0.1)',
+    stroke: '#000000',
+    strokeWidth: 2,
+    name: `polygon-${nanoid()}`,
+    lockScalingX: true,
+    lockScalingY: true,
+  })
+
+  canvas.add(polygon)
+  // 移除所有点
+  canvas.getObjects().filter(obj => obj.name === 'point').forEach(obj => canvas.remove(obj))
+
+  canvas.renderAll()
+  console.warn('[functions.ts]:', '创建多边形', polygon)
+  // Convert points to simple objects for event
+  const pointObjects = points.map(p => ({ x: p.x, y: p.y }))
+
+  // Emit custom event
+  canvas.fire('polygon:created', {
+    polygon,
+    points: pointObjects,
+  } as PolygonDrawnEvent)
+
+  // Reset drawing state
+  stopPolygonDrawing()
+}
+
+// Clean up function
+export function destroyPolygonDrawing() {
+  const canvas = utilFabricGetCanvasInstance()
+  canvas.off('mouse:down', onMouseDown)
+  canvas.off('mouse:move', onMouseMove)
+  canvas.off('mouse:dblclick', onDoubleClick)
 }
