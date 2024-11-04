@@ -1,4 +1,5 @@
 import { fabric } from 'fabric'
+import FontFaceObserver from 'fontfaceobserver'
 
 export function utilFabricGetCanvasInstance() {
   if (!fabricCanvas.value) {
@@ -127,4 +128,22 @@ export function utilFabricSetWorkspaceZoom(scale: number) {
   utilFabricSetWorkspaceCenter()
   // 超出workspace画布不展示
   utilFabricFlipWorkspace()
+}
+
+export async function utilFabricLoadFont(fontName: string): Promise<boolean> {
+  if (!fontName)
+    return false
+    // 如果字体已经加载过，直接返回 true
+  if (fabricLoadedFonts.has(fontName))
+    return true
+  const font = new FontFaceObserver(fontName)
+  try {
+    await font.load(null, 150000)
+    fabricLoadedFonts.add(fontName) // 加载成功后，将字体添加到已加载字体集合
+    return true
+  }
+  catch (error: any) {
+    console.error('字体加载失败')
+    throw new Error(error)
+  }
 }

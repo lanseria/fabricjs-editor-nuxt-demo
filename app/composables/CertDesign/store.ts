@@ -1,5 +1,7 @@
 import type { fabric } from 'fabric'
 
+export const fabricLoadedFonts = new Set<string>()
+
 export const fabricCanvas = shallowRef<fabric.Canvas>()
 watchEffect(() => {
   const objectList = fabricCanvas.value?.getObjects()

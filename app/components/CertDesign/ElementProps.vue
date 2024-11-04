@@ -1,13 +1,11 @@
 <script lang="ts" setup>
-const { loadFont } = useFont()
-
 async function onChange(key: keyof fabric.Object, e: Event) {
   const canvas = utilFabricGetCanvasInstance()
   if (key === 'fontFamily') {
     // eslint-disable-next-line ts/ban-ts-comment
     // @ts-expect-error
     const val: string = e.target!.value
-    if (await loadFont(val)) {
+    if (await utilFabricLoadFont(val)) {
       const activeObject = canvas.getActiveObject()!
       if (activeObject)
         activeObject.set('fontFamily', val)
