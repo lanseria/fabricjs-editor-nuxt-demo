@@ -12,7 +12,7 @@ export default defineNuxtConfig({
   ssr: false,
   imports: {
     dirs: [
-      'composables/**',
+      'composables/PolygonLink/*',
     ],
   },
   devtools: {

@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="flex-1 p2">
-      <CertDesign />
+      <PolygonLink />
     </div>
   </div>
 </template>
