@@ -1,9 +1,12 @@
 <script lang="ts" setup>
+import RightBox from './RightBox.vue'
+
 const canvasRef = useTemplateRef('canvasRef')
 const wrapRef = useTemplateRef('wrapRef')
 onMounted(() => {
   initCanvasBasicPlugin(canvasRef, wrapRef)
   bindGrabPlugin()
+  initPolygonDrawing()
   window.addEventListener('resize', handleResizeWindowPlugin(wrapRef))
   window.addEventListener('keydown', handleKeyDownWindowPlugin)
   window.addEventListener('keyup', handleKeyUpWindowPlugin)
@@ -13,6 +16,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResizeWindowPlugin(wrapRef))
   window.removeEventListener('keydown', handleKeyDownWindowPlugin)
   window.removeEventListener('keyup', handleKeyUpWindowPlugin)
+  destroyPolygonDrawing()
   disposeCanvasBasicPlugin()
 })
 </script>
@@ -51,7 +55,7 @@ onUnmounted(() => {
         </div>
       </div>
       <div class="w-400px flex-none overflow-y-auto px-10px py-20px">
-        TODO
+        <RightBox />
       </div>
     </div>
   </div>
