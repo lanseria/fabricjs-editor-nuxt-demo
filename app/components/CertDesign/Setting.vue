@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import BackgroundBtn from './Btn/BackgroundBtn.vue'
-import LineBtn from './Btn/LineBtn.vue'
+import Polygon from './Btn/PolygonBtn.vue'
 </script>
 
 <template>
   <div class="inline-flex flex-wrap gap-2">
     <BackgroundBtn />
-    <LineBtn>风险分析对象</LineBtn>
-    <LineBtn>风险分析单元</LineBtn>
+    <Polygon>风险分析对象</Polygon>
+    <Polygon>风险分析单元</Polygon>
   </div>
 </template>
