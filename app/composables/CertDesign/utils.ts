@@ -75,16 +75,18 @@ export function utilFabricSetCanvasZoom(scale: number) {
   const center = canvas.getCenter()
   canvas.setViewportTransform(fabric.iMatrix.concat())
   canvas.zoomToPoint(new fabric.Point(center.left, center.top), scale)
+  canvas.renderAll()
   console.warn('[util.ts]:', '设置Canvas缩放', scale)
 }
 /**
  * 设置画布大小
  */
 function utilFabricSetWorkspaceSize() {
-  const { workspace } = utilFabricGetWorkspaceInstance()
+  const { workspace, canvas } = utilFabricGetWorkspaceInstance()
   const { height, width } = fabricCanvasWorkspaceSize.value
   workspace.set('width', width)
   workspace.set('height', height)
+  canvas.renderAll()
   console.warn('[util.ts]:', '设置画布大小', width, height)
 }
 /**
@@ -127,4 +129,6 @@ export function utilFabricSetWorkspaceZoom(scale: number) {
   utilFabricSetWorkspaceCenter()
   // 超出workspace画布不展示
   utilFabricFlipWorkspace()
+  // 重新渲染
+  triggerRef(fabricCanvas)
 }

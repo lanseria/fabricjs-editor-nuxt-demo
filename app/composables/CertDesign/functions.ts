@@ -154,6 +154,40 @@ export function onFabricSetBackground(url: string): Promise<fabric.Image> {
     })
   })
 }
+
+// 定义一个方法来添加文字
+export function onFabricCanvasAddText(
+  text: string,
+  options: {
+    left?: number
+    top?: number
+    fontSize?: number
+    fill?: string
+    fontFamily?: string
+    fontWeight?: string
+    fontStyle?: string
+  } = {},
+): fabric.Text {
+  const canvas = utilFabricGetCanvasInstance()
+  // 创建一个 Text 对象
+  const textObj = new fabric.Text(text, {
+    left: options.left ?? 100, // X 坐标，默认为 100
+    top: options.top ?? 100, // Y 坐标，默认为 100
+    fontSize: options.fontSize ?? 24, // 字体大小，默认为 24
+    fill: options.fill ?? '#000000', // 文字颜色，默认为黑色
+    fontFamily: options.fontFamily ?? 'Arial', // 字体，默认为 Arial
+    fontWeight: options.fontWeight ?? 'normal', // 字体粗细
+  })
+
+  // 将文字对象添加到 canvas 上
+  canvas.add(textObj)
+
+  // 渲染画布
+  canvas.renderAll()
+  triggerRef(fabricCanvas)
+  // 返回创建的文字对象，以便后续操作
+  return textObj
+}
 // 已知 我写了 添加背景图片功能，根据我下面的代码，添加绘制多边形的功能，我用的是vue3
 // 用fabric.js@5 实现一个绘制多边形功能，具体：点击绘制按钮后，将在画布上绘制多边形，双击结束绘制，并创建完成一个多边形并触发一个事件
 
@@ -281,20 +315,18 @@ function onDoubleClick(_event: fabric.IEvent) {
 
   // Create final polygon
   const polygon = new fabric.Polygon(points, {
-    fill: 'rgba(0,0,0,0.1)',
-    stroke: '#000000',
-    strokeWidth: 2,
+    fill: '#ccccccff',
+    // stroke: '#000000',
+    // strokeWidth: 2,
     name: `polygon-${nanoid()}`,
-    lockScalingX: true,
-    lockScalingY: true,
+    // lockScalingX: true,
+    // lockScalingY: true,
   })
 
   canvas.add(polygon)
   // 移除所有点
   canvas.getObjects().filter(obj => obj.name === 'point').forEach(obj => canvas.remove(obj))
 
-  canvas.renderAll()
-  console.warn('[functions.ts]:', '创建多边形', polygon)
   // Convert points to simple objects for event
   const pointObjects = points.map(p => ({ x: p.x, y: p.y }))
 
@@ -303,7 +335,8 @@ function onDoubleClick(_event: fabric.IEvent) {
     polygon,
     points: pointObjects,
   } as PolygonDrawnEvent)
-
+  canvas.renderAll()
+  triggerRef(fabricCanvas)
   // Reset drawing state
   stopPolygonDrawing()
 }
