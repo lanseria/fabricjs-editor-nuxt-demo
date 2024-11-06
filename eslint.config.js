@@ -7,6 +7,13 @@ export default nuxt(
     {
       unocss: true,
       formatters: true,
+      vue: {
+        overrides: {
+          'vue/component-name-in-template-casing': ['error', 'PascalCase', {
+            registeredComponentsOnly: false,
+          }],
+        },
+      },
     },
   ),
 )

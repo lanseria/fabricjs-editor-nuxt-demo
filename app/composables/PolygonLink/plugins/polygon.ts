@@ -5,17 +5,49 @@ let lineObjects: fabric.Line[] = []
 let activePolygon: fabric.Polygon | null = null
 const points: fabric.Point[] = []
 
-export function initPolygonDrawing() {
-  const canvas = canvasFabric.value!
+function convertPoints(points: fabric.Point[]): { x: number, y: number }[] {
+  return points.map(point => ({
+    x: point.x,
+    y: point.y,
+  }))
+}
+function getBoundingBox(points: fabric.Point[]): { left: number, top: number, width: number, height: number } {
+  if (points.length === 0) {
+    throw new Error('Points array is empty.')
+  }
 
-  // Initialize canvas event handlers for polygon drawing
-  canvas.on('mouse:down', onMouseDown)
-  canvas.on('mouse:move', onMouseMove)
-  canvas.on('mouse:dblclick', onDoubleClick)
+  // 初始化最小和最大值
+  let minX = points[0]!.x
+  let minY = points[0]!.y
+  let maxX = points[0]!.x
+  let maxY = points[0]!.y
+
+  // 遍历所有点，更新最小和最大值
+  for (const point of points) {
+    if (point.x < minX)
+      minX = point.x
+    if (point.y < minY)
+      minY = point.y
+    if (point.x > maxX)
+      maxX = point.x
+    if (point.y > maxY)
+      maxY = point.y
+  }
+
+  // 计算宽度和高度
+  const width = maxX - minX
+  const height = maxY - minY
+
+  // 返回左上角坐标、宽度和高度
+  return { left: minX, top: minY, width, height }
 }
 
 export function startPolygonDrawing() {
   const canvas = canvasFabric.value!
+  // Initialize canvas event handlers for polygon drawing
+  canvas.on('mouse:down', onMouseDown)
+  canvas.on('mouse:move', onMouseMove)
+  canvas.on('mouse:dblclick', onDoubleClick)
   isDrawingMode.value = true
   canvas.selection = false
   canvas.defaultCursor = 'crosshair'
@@ -41,6 +73,9 @@ export function stopPolygonDrawing() {
     activePolygon = null
   }
   canvas.renderAll()
+  canvas.off('mouse:down', onMouseDown)
+  canvas.off('mouse:move', onMouseMove)
+  canvas.off('mouse:dblclick', onDoubleClick)
 }
 
 function onMouseDown(event: fabric.IEvent) {
@@ -117,45 +152,47 @@ function onDoubleClick(_event: fabric.IEvent) {
     return
 
   const canvas = canvasFabric.value!
+  // // Remove all temporary drawing objects
+  // lineObjects.forEach(line => canvas.remove(line))
+  // if (activePolygon) {
+  //   canvas.remove(activePolygon)
+  // }
 
-  // Remove all temporary drawing objects
-  lineObjects.forEach(line => canvas.remove(line))
-  if (activePolygon) {
-    canvas.remove(activePolygon)
-  }
+  // // Create final polygon
+  const polygonPoints = convertPoints(points)
+  // console.warn(polygonPoints)
+  const boundingBox = getBoundingBox(points)
+  // console.warn(boundingBox)
+  const name = `polygon-${nanoid(4)}`
 
-  // Create final polygon
-  const polygon = new fabric.Polygon(points, {
-    fill: '#ccccccff',
-    // stroke: '#000000',
-    // strokeWidth: 2,
-    name: `polygon-${nanoid()}`,
-    // lockScalingX: true,
-    // lockScalingY: true,
+  const polygonWithText = new PolygonWithText(canvas, {
+    points: polygonPoints,
+    left: boundingBox.left,
+    top: boundingBox.top,
+    width: boundingBox.width,
+    height: boundingBox.height,
+    text: name,
+    name,
+    fill: 'rgba(0,0,0,0.1)',
+    stroke: '#000',
+    strokeWidth: 1,
+    fontSize: 24,
+    textColor: '#000',
   })
 
-  canvas.add(polygon)
-  // 移除所有点
+  // canvas.add(polygon)
+  // // 移除所有点
   canvas.getObjects().filter(obj => obj.name === 'point').forEach(obj => canvas.remove(obj))
 
-  // Convert points to simple objects for event
-  const pointObjects = points.map(p => ({ x: p.x, y: p.y }))
-
-  // Emit custom event
-  canvas.fire('polygon:created', {
-    polygon,
-    points: pointObjects,
-  } as PolygonDrawnEvent)
-  canvas.renderAll()
+  emitter.emit('polygon:created', polygonWithText.options.name)
+  // canvas.renderAll()
   triggerRef(canvasFabric)
+  // 添加到对象列表
+  polygonWithTextList.value.push(polygonWithText)
   // Reset drawing state
   stopPolygonDrawing()
 }
 
 // Clean up function
-export function destroyPolygonDrawing() {
-  const canvas = canvasFabric.value!
-  canvas.off('mouse:down', onMouseDown)
-  canvas.off('mouse:move', onMouseMove)
-  canvas.off('mouse:dblclick', onDoubleClick)
-}
+// export function destroyPolygonDrawing() {
+// }

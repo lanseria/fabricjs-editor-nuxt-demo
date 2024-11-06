@@ -8,11 +8,13 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxtjs/color-mode',
     '@nuxt/eslint',
+    'arco-design-nuxt-module',
   ],
   ssr: false,
   imports: {
     dirs: [
-      'composables/PolygonLink/*',
+      'composables/PolygonLink/**',
+      'composables/*',
     ],
   },
   devtools: {
@@ -62,6 +64,8 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: [
         'fabric',
+        'mitt',
+        'nanoid',
       ],
     },
   },

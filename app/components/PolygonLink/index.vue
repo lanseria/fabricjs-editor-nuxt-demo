@@ -1,12 +1,13 @@
 <script lang="ts" setup>
+import BindRiskAnalysisObjectModal from './BindRiskAnalysisObjectModal.vue'
 import RightBox from './RightBox.vue'
 
 const canvasRef = useTemplateRef('canvasRef')
 const wrapRef = useTemplateRef('wrapRef')
+const BindRiskAnalysisObjectModalRef = useTemplateRef('BindRiskAnalysisObjectModalRef')
 onMounted(() => {
   initCanvasBasicPlugin(canvasRef, wrapRef)
   bindGrabPlugin()
-  initPolygonDrawing()
   window.addEventListener('resize', handleResizeWindowPlugin(wrapRef))
   window.addEventListener('keydown', handleKeyDownWindowPlugin)
   window.addEventListener('keyup', handleKeyUpWindowPlugin)
@@ -16,7 +17,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResizeWindowPlugin(wrapRef))
   window.removeEventListener('keydown', handleKeyDownWindowPlugin)
   window.removeEventListener('keyup', handleKeyUpWindowPlugin)
-  destroyPolygonDrawing()
+  unbindGrabPlugin()
   disposeCanvasBasicPlugin()
 })
 </script>
@@ -25,7 +26,7 @@ onUnmounted(() => {
   <div class="h-full w-full flex flex-col">
     <div class="flex flex-none items-center justify-between border-b-1px px-4 py-2">
       <div class="text-20px text-dark font-bold">
-        Polygon Link
+        企业风险四色图
       </div>
       <div class="flex gap-2">
         <button class="btn">
@@ -36,6 +37,9 @@ onUnmounted(() => {
         </button>
         <button class="btn">
           导出
+        </button>
+        <button class="btn">
+          导入
         </button>
       </div>
     </div>
@@ -56,6 +60,7 @@ onUnmounted(() => {
       </div>
       <div class="w-400px flex-none overflow-y-auto px-10px py-20px">
         <RightBox />
+        <BindRiskAnalysisObjectModal ref="BindRiskAnalysisObjectModalRef" />
       </div>
     </div>
   </div>

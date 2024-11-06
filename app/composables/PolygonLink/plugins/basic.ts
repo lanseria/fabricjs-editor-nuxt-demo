@@ -42,6 +42,7 @@ export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | 
     fill: 'white',
     selectable: false,
     hoverCursor: 'default',
+    name: 'workspace',
   })
 
   // 将白色画布添加到canvas中
