@@ -6,6 +6,6 @@
 2. 再添加一个按住空格，cursor变为手的形状，并可以拖移整个画布
 3.
 
-- page[]
-  - layer[] PolygonWithTextList
+- page[] 展示一个 画板 右边一个图例
+  - layer[] PolygonWithTextList 进入画板，左边是工具栏，右边是图层
     - object PolygonWithText
