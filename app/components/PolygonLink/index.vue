@@ -9,14 +9,14 @@ onMounted(() => {
   initCanvasBasicPlugin(canvasRef, wrapRef)
   bindGrabPlugin()
   window.addEventListener('resize', handleResizeWindowPlugin(wrapRef))
-  window.addEventListener('keydown', handleKeyDownWindowPlugin)
-  window.addEventListener('keyup', handleKeyUpWindowPlugin)
+  // window.addEventListener('keydown', handleKeyDownWindowPlugin)
+  // window.addEventListener('keyup', handleKeyUpWindowPlugin)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResizeWindowPlugin(wrapRef))
-  window.removeEventListener('keydown', handleKeyDownWindowPlugin)
-  window.removeEventListener('keyup', handleKeyUpWindowPlugin)
+  // window.removeEventListener('keydown', handleKeyDownWindowPlugin)
+  // window.removeEventListener('keyup', handleKeyUpWindowPlugin)
   unbindGrabPlugin()
   disposeCanvasBasicPlugin()
 })

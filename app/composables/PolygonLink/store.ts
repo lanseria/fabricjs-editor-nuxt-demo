@@ -14,7 +14,7 @@ export const canvasFabricSelectableObjectList = computed(() => {
 })
 export const polygonWithTextList = shallowRef<PolygonWithText[]>([])
 
-export const isSpacePressed = ref(false)
+// export const isSpacePressed = ref(false)
 export const isPanning = ref(false)
-export const { space } = useMagicKeys()
+export const { space: isSpacePressed } = useMagicKeys()
 export const isDrawingMode = ref(false)
