@@ -23,23 +23,19 @@ export function onPageDelete(item: PageRecord) {
 export function onLayerAdd(options: PolygonWithTextOptions) {
   console.warn('[onLayerAdd]:', options)
   if (!currentPageId.value) {
+    console.error('请先选择页面ID', currentPageId.value)
     Message.warning('请先选择页面ID')
     return
   }
-  const index = storePageList.value.findIndex(i => i.id === currentPageId.value)
-  if (index === -1) {
-    Message.warning('请先选择页面ID')
-    return
-  }
-  const currentLayerList = storePageList.value[index]!.children
+  const currentLayerList = storeLayerList.value.filter(i => i.pageId === currentPageId.value)
   if (currentLayerList.find(i => i.name === options.name)) {
     // 更新
     const idx = currentLayerList.findIndex(i => i.name === options.name)
-    storePageList.value[index]!.children[idx] = options
+    storeLayerList.value[idx] = { ...options }
   }
   else {
     // 新增
-    storePageList.value[index]!.children.push(options)
+    storeLayerList.value.push(options)
   }
   triggerRef(storePageList)
 }

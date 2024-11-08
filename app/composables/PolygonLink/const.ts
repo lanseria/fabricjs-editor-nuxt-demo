@@ -11,7 +11,6 @@ export const riskLevelStatusMap: Record<number, string> = {
   2: '较大风险',
   1: '重大风险',
 }
-export const selectedKeys = ref<number[]>([])
 export const levelColorMap: Record<number, string> = {
   4: '#035EF7',
   3: '#FEE516',

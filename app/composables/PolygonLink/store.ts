@@ -1,8 +1,8 @@
 import type { PolygonWithText } from './entity/PolygonWithText'
 
-export const storePageList = useLocalStorage<PageRecord[]>('storePageList', [], {
-  deep: true,
-})
+export const storePageList = useLocalStorage<PageRecord[]>('storePageList', [])
+
+export const storeLayerList = useLocalStorage<PolygonWithTextOptions[]>('storeLayerList', [])
 
 export const currentPageId = ref('')
 

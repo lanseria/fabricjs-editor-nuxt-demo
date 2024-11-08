@@ -26,6 +26,8 @@ function createGridPattern() {
  * 更新画布尺寸
  */
 export function updateCanvasSize(wrapWidth: number, wrapHeight: number) {
+  if (wrapHeight === 0 || wrapWidth === 0)
+    return
   const canvas = canvasFabric.value!
   // 更新画布尺寸
   // canvas.setWidth(wrapWidth)

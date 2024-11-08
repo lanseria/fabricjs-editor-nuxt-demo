@@ -1,6 +1,12 @@
 <script lang="ts" setup>
 import { vElementSize } from '@vueuse/components'
 
+const props = defineProps({
+  edit: {
+    type: Boolean,
+    default: false,
+  },
+})
 const canvasRef = useTemplateRef('canvasRef')
 const wrapRef = useTemplateRef('wrapRef')
 
@@ -15,11 +21,19 @@ onMounted(() => {
   onWheelPlugin()
   // 添加鼠标拖拽事件
   bindGrabPlugin()
+  if (props.edit) {
+    // 监听所有对象变化
+    onObjectChange()
+  }
 })
 
 onUnmounted(() => {
   // 解绑滚轮缩放事件
   unbindGrabPlugin()
+  if (props.edit) {
+    // 卸载监听所有对象变化
+    offObjectChange()
+  }
   // 卸载fabric画布
   disposeCanvasBasicPlugin()
 })

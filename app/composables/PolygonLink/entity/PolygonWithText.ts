@@ -37,10 +37,67 @@ export class PolygonWithText {
       name: options.name,
     })
 
+    // 添加事件监听器
+    this.setupEventListeners()
     // 添加到画布
-    // console.warn(this.group.width, this.group.height)
     this.canvas.add(this.group)
-    // this.canvas.renderAll()
+  }
+
+  private setupEventListeners() {
+    // 监听移动事件
+    this.group.on('moving', () => {
+      this.syncPositionToOptions()
+    })
+
+    // 监听缩放事件
+    this.group.on('scaling', () => {
+      this.syncSizeToOptions()
+    })
+
+    // 监听旋转事件
+    // this.group.on('rotating', () => {
+    //   this.syncRotationToOptions()
+    // })
+
+    // 监听修改完成事件
+    this.group.on('modified', () => {
+      this.syncAllPropertiesToOptions()
+      triggerRef(canvasFabric)
+    })
+  }
+
+  // 同步位置到 options
+  private syncPositionToOptions() {
+    if (this.group) {
+      this.options.left = this.group.left ?? 0
+      this.options.top = this.group.top ?? 0
+    }
+  }
+
+  // 同步大小到 options
+  private syncSizeToOptions() {
+    if (this.group) {
+      const scaled = {
+        width: (this.group.width ?? 0) * (this.group.scaleX ?? 1),
+        height: (this.group.height ?? 0) * (this.group.scaleY ?? 1),
+      }
+      this.options.width = scaled.width
+      this.options.height = scaled.height
+
+      // 更新点坐标
+      if (this.group.scaleX && this.group.scaleY) {
+        this.options.points = this.options.points.map(point => ({
+          x: point.x * this.group.scaleX!,
+          y: point.y * this.group.scaleY!,
+        }))
+      }
+    }
+  }
+
+  // 同步所有属性到 options
+  private syncAllPropertiesToOptions() {
+    this.syncPositionToOptions()
+    this.syncSizeToOptions()
   }
 
   // 更新文本内容

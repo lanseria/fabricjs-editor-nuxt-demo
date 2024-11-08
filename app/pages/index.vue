@@ -1,4 +1,12 @@
 <script setup lang="ts">
+const pageListWithLayer = computed (() => {
+  return storePageList.value.map((item) => {
+    return {
+      ...item,
+      layerList: storeLayerList.value.filter(layer => layer.pageId === item.id),
+    }
+  })
+})
 function onDesignPage(item: PageRecord) {
   navigateTo(`/hi/${item.id}`)
 }
@@ -14,8 +22,8 @@ function onDesignPage(item: PageRecord) {
         <ToolBtn icon-name="i-carbon-add" tooltip-name="添加页面" @click="onPageAdd()" />
       </div>
       <div class="flex flex-col">
-        <div v-for="item in storePageList" :key="item.id" class="flex items-center justify-between px-2 py-1 hover:bg-gray-50">
-          <div>{{ item.name }}</div>
+        <div v-for="item in pageListWithLayer" :key="item.id" class="flex items-center justify-between px-2 py-1 hover:bg-gray-50">
+          <div>{{ item.name }}<span>({{ item.layerList.length }})</span></div>
           <div class="flex">
             <ToolBtn icon-name="i-carbon-area-custom" tooltip-name="设计" @click="onDesignPage(item)" />
             <ToolBtn icon-name="i-carbon-edit" tooltip-name="编辑" />

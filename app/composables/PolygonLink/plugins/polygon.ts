@@ -172,6 +172,7 @@ function onDoubleClick(_event: fabric.IEvent) {
     strokeWidth: 1,
     fontSize: 24,
     textColor: '#000',
+    pageId: currentPageId.value,
   })
 
   // canvas.add(polygon)

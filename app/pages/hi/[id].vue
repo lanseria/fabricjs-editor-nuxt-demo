@@ -1,31 +1,28 @@
 <script lang="ts" setup>
 const route = useRoute<'hi-id'>()
-const id = route.params.id
-
-const layerList = computed(() => {
-  return storePageList.value.find(i => i.id === id)?.children || []
+const id = computed(() => route.params.id)
+const pageName = computed(() => {
+  const item = storePageList.value.find(i => i.id === id.value)
+  if (item)
+    return item.name
+  else
+    return ''
 })
-
-function onDeleteLayer(item: PolygonWithTextOptions) {
-  onPolygonDelete(item.name)
-  storePageList.value = storePageList.value.map((i) => {
-    if (i.id === id) {
-      return {
-        ...i,
-        children: i.children.filter(i => i.name !== item.name),
-      }
-    }
-    else {
-      return i
-    }
-  })
+function onLayerDelete(record: PolygonWithTextOptions) {
+  onPolygonDelete(record.name)
+  storeLayerList.value = storeLayerList.value.filter(item => item.name !== record.name)
+}
+function onLayerEdit(record: PolygonWithTextOptions) {
+  currentPageId.value = record.pageId
+  emitter.emit('polygon:updated', { name: record.name, id: record.riskAnalysisObjectId })
 }
 function toggleDrawMode() {
-  if (!id) {
+  if (!id.value) {
+    console.error('请先选择页面ID', id.value)
     Message.warning('请先选择页面ID')
     return
   }
-  currentPageId.value = id
+  currentPageId.value = id.value
   if (isDrawingMode.value) {
     console.warn('[PolygonBtn.vue]:', 'stopPolygonDrawing')
     stopPolygonDrawing()
@@ -36,7 +33,7 @@ function toggleDrawMode() {
   }
 }
 onMounted(() => {
-  layerList.value.forEach((item) => {
+  storeLayerList.value.forEach((item) => {
     onPolygonInitAdd(item)
   })
 })
@@ -49,14 +46,17 @@ onMounted(() => {
       <PolygonLinkBindRiskAnalysisObjectModal />
     </div>
     <div class="w-300px flex-none border-r-1px border-gray-1">
-      <div class="flex items-center border-b-1px border-gray-1 px-2 py-1">
+      <div class="flex items-center gap-2 border-b-1px border-gray-1 px-4 py-2">
         <div class="text-14px font-bold">
+          {{ pageName }}
+        </div>
+        <div>
           图层
         </div>
       </div>
       <div class="flex flex-col">
-        <div v-for="item in layerList" :key="item.name" class="flex items-center justify-between px-2 py-1 hover:bg-gray-50">
-          <div class="flex items-center">
+        <div v-for="item in storeLayerList" :key="item.name" class="flex items-center justify-between px-2 py-1 hover:bg-gray-50">
+          <div class="flex items-center gap-2">
             <div>
               {{ item.text }}
             </div>
@@ -72,12 +72,12 @@ onMounted(() => {
             </div>
           </div>
           <div class="flex">
-            <ToolBtn icon-name="i-carbon-edit" tooltip-name="编辑" />
-            <ToolBtn icon-name="i-carbon-trash-can" tooltip-name="删除" @click="onDeleteLayer(item)" />
+            <ToolBtn icon-name="i-carbon-edit" tooltip-name="编辑" @click="onLayerEdit(item)" />
+            <ToolBtn icon-name="i-carbon-trash-can" tooltip-name="删除" @click="onLayerDelete(item)" />
           </div>
         </div>
       </div>
     </div>
-    <PolygonLink />
+    <PolygonLink edit />
   </div>
 </template>

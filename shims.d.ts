@@ -19,7 +19,7 @@ interface PolygonDrawnEvent {
 }
 
 interface AnalysisObject {
-  id: number
+  id: string
   name: string
   level: number
 }
@@ -38,12 +38,13 @@ interface PolygonWithTextOptions {
   fontSize?: number
   textColor?: string
   // 绑定风险分析对象ID
-  riskAnalysisObjectId?: number
+  riskAnalysisObjectId?: string
   riskAnalysisObjectLevel?: number
+  // pageId
+  pageId: string
 }
 
 interface PageRecord {
   id: string
   name: string
-  children: PolygonWithTextOptions[]
 }
