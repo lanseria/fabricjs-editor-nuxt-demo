@@ -1,23 +1,28 @@
 <script lang="ts" setup>
+import { vElementSize } from '@vueuse/components'
 import BindRiskAnalysisObjectModal from './BindRiskAnalysisObjectModal.vue'
 import RightBox from './RightBox.vue'
 
 const canvasRef = useTemplateRef('canvasRef')
 const wrapRef = useTemplateRef('wrapRef')
-const BindRiskAnalysisObjectModalRef = useTemplateRef('BindRiskAnalysisObjectModalRef')
+
+function onResize({ width, height }: { width: number, height: number }) {
+  updateCanvasSize(width, height)
+}
+const debouncedOnResize = useDebounceFn(onResize, 300)
+
 onMounted(() => {
   initCanvasBasicPlugin(canvasRef, wrapRef)
+  // 添加滚轮缩放事件
+  onWheelPlugin()
+  // 添加鼠标拖拽事件
   bindGrabPlugin()
-  window.addEventListener('resize', handleResizeWindowPlugin(wrapRef))
-  // window.addEventListener('keydown', handleKeyDownWindowPlugin)
-  // window.addEventListener('keyup', handleKeyUpWindowPlugin)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResizeWindowPlugin(wrapRef))
-  // window.removeEventListener('keydown', handleKeyDownWindowPlugin)
-  // window.removeEventListener('keyup', handleKeyUpWindowPlugin)
+  // 解绑滚轮缩放事件
   unbindGrabPlugin()
+  // 卸载fabric画布
   disposeCanvasBasicPlugin()
 })
 </script>
@@ -53,14 +58,14 @@ onUnmounted(() => {
         </div>
       </div>
       <div class="shrink grow basis-0 overflow-hidden bg-[#f1f1f1]">
-        <div ref="wrapRef" class="relative h-full w-full">
+        <div ref="wrapRef" v-element-size="debouncedOnResize" class="relative h-full w-full">
           <div class="pointer-events-none absolute z-10 h-full w-full shadow-[inset_0_0_9px_2px_#0000001f]" />
           <canvas ref="canvasRef" />
         </div>
       </div>
       <div class="w-400px flex-none overflow-y-auto px-10px py-20px">
         <RightBox />
-        <BindRiskAnalysisObjectModal ref="BindRiskAnalysisObjectModalRef" />
+        <BindRiskAnalysisObjectModal />
       </div>
     </div>
   </div>

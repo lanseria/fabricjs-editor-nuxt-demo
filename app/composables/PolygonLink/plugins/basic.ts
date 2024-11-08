@@ -22,15 +22,49 @@ function createGridPattern() {
 
   return patternCanvas
 }
+/**
+ * 更新画布尺寸
+ */
+export function updateCanvasSize(wrapWidth: number, wrapHeight: number) {
+  const canvas = canvasFabric.value!
+  // 更新画布尺寸
+  // canvas.setWidth(wrapWidth)
+  // canvas.setHeight(wrapHeight)
+  canvas.setDimensions({
+    width: wrapWidth,
+    height: wrapHeight,
+  })
 
+  // 计算缩放比例使画布适应容器
+  const scaleX = (wrapWidth - 100) / 2000
+  const scaleY = (wrapHeight - 100) / 2000
+  const scale = Math.min(scaleX, scaleY)
+
+  // 设置画布缩放和中心位置
+  canvas.setZoom(scale)
+  canvas.setViewportTransform([
+    scale,
+    0,
+    0,
+    scale,
+    (wrapWidth - 2000 * scale) / 2,
+    (wrapHeight - 2000 * scale) / 2,
+  ])
+
+  console.warn('[updateCanvasSize]', scale)
+  console.warn('[updateCanvasSize]', wrapWidth)
+  console.warn('[updateCanvasSize]', wrapHeight)
+}
 // 初始化画布
 export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | null>, wrapRef: ShallowRef<HTMLDivElement | null>) {
   // 创建fabric画布
   if (!wrapRef.value)
     return
+  const wrapWidth = wrapRef.value.clientWidth
+  const wrapHeight = wrapRef.value.clientHeight
   const canvas = new fabric.Canvas(canvasRef.value, {
-    width: wrapRef.value.clientWidth,
-    height: wrapRef.value.clientHeight,
+    width: wrapWidth,
+    height: wrapHeight,
     backgroundColor: '#E5E5E5',
     selection: false,
   })
@@ -56,26 +90,9 @@ export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | 
     source: gridPattern,
     repeat: 'repeat',
   }, canvas.renderAll.bind(canvas))
-
-  // 计算缩放比例使画布适应容器
-  const scaleX = (wrapRef.value.clientWidth - 100) / 2000
-  const scaleY = (wrapRef.value.clientHeight - 100) / 2000
-  const scale = Math.min(scaleX, scaleY)
-
-  // 设置画布缩放和中心位置
-  canvas.setZoom(scale)
-  canvas.setViewportTransform([
-    scale,
-    0,
-    0,
-    scale,
-    (wrapRef.value.clientWidth - 2000 * scale) / 2,
-    (wrapRef.value.clientHeight - 2000 * scale) / 2,
-  ])
   // 保存画布
   canvasFabric.value = canvas
-  // 添加滚轮缩放事件
-  onWheelPlugin()
+  updateCanvasSize(wrapWidth, wrapHeight)
 }
 
 export function disposeCanvasBasicPlugin() {
