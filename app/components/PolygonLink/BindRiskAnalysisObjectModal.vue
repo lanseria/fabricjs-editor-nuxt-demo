@@ -13,32 +13,32 @@ const renderData = ref<AnalysisObject[]>([
   {
     id: 1,
     name: '中控楼',
-    level: 0,
+    level: 1,
   },
   {
     id: 2,
     name: '35kV变电所2',
-    level: 1,
+    level: 2,
   },
   {
     id: 3,
     name: '35kV变电所3',
-    level: 2,
+    level: 3,
   },
   {
     id: 4,
     name: '35kV变电所4',
-    level: 3,
+    level: 4,
   },
   {
     id: 5,
     name: '35kV变电所5',
-    level: 1,
+    level: 2,
   },
   {
     id: 6,
     name: '35kV变电所6',
-    level: 1,
+    level: 2,
   },
 ])
 
@@ -61,8 +61,10 @@ function onBeforeOk(done: (closed: boolean) => void) {
     const selectItem = renderData.value.find(item => item.id === selectedKeys.value[0])
     const currentPolygonWithTextIdx = polygonWithTextList.value.findIndex(item => item.options.name === currentPolygonWithTextName.value)
     if (selectItem && currentPolygonWithTextIdx !== -1) {
-      polygonWithTextList.value[currentPolygonWithTextIdx]!.bindRiskAnalysis(selectItem)
+      const polygonWithText = polygonWithTextList.value[currentPolygonWithTextIdx]!
+      polygonWithText.bindRiskAnalysis(selectItem)
       triggerRef(polygonWithTextList)
+      onLayerAdd(polygonWithText.options)
     }
     done(true)
   }

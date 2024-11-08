@@ -152,12 +152,6 @@ function onDoubleClick(_event: fabric.IEvent) {
     return
 
   const canvas = canvasFabric.value!
-  // // Remove all temporary drawing objects
-  // lineObjects.forEach(line => canvas.remove(line))
-  // if (activePolygon) {
-  //   canvas.remove(activePolygon)
-  // }
-
   // // Create final polygon
   const polygonPoints = convertPoints(points)
   // console.warn(polygonPoints)
@@ -189,10 +183,21 @@ function onDoubleClick(_event: fabric.IEvent) {
   triggerRef(canvasFabric)
   // 添加到对象列表
   polygonWithTextList.value.push(polygonWithText)
+  onLayerAdd(polygonWithText.options)
   // Reset drawing state
   stopPolygonDrawing()
 }
 
-// Clean up function
-// export function destroyPolygonDrawing() {
-// }
+export function onPolygonInitAdd(options: PolygonWithTextOptions) {
+  const canvas = canvasFabric.value!
+  const polygonWithText = new PolygonWithText(canvas, options)
+  polygonWithTextList.value.push(polygonWithText)
+}
+
+export function onPolygonDelete(name: string) {
+  const polygonWithText = polygonWithTextList.value.find(i => i.options.name === name)
+  if (polygonWithText) {
+    polygonWithText.remove()
+    polygonWithTextList.value = polygonWithTextList.value.filter(i => i.options.name !== name)
+  }
+}

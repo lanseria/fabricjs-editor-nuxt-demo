@@ -69,6 +69,7 @@ export class PolygonWithText {
     this.updateText(riskAnalysis.name, textColor)
     this.updateBg(bgColor)
     this.options.riskAnalysisObjectId = riskAnalysis.id
+    this.options.riskAnalysisObjectLevel = riskAnalysis.level
     this.canvas.renderAll()
     triggerRef(canvasFabric)
   }

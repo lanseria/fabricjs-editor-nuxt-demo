@@ -1,5 +1,11 @@
 import type { PolygonWithText } from './entity/PolygonWithText'
 
+export const storePageList = useLocalStorage<PageRecord[]>('storePageList', [], {
+  deep: true,
+})
+
+export const currentPageId = ref('')
+
 export const canvasFabric = shallowRef<fabric.Canvas>()
 watchEffect(() => {
   const objectList = canvasFabric.value?.getObjects()

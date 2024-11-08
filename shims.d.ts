@@ -39,4 +39,11 @@ interface PolygonWithTextOptions {
   textColor?: string
   // 绑定风险分析对象ID
   riskAnalysisObjectId?: number
+  riskAnalysisObjectLevel?: number
+}
+
+interface PageRecord {
+  id: string
+  name: string
+  children: PolygonWithTextOptions[]
 }
