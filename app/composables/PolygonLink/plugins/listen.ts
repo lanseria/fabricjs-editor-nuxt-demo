@@ -3,13 +3,15 @@ export function onObjectChange() {
   // 监听所有对象的变化
   canvas.on('object:modified', (e) => {
     const obj = e.target
-    console.log(`Object modified: ${obj.type}`)
-    console.log(`New position: (${obj.left}, ${obj.top})`)
-    console.log(`New scale: (scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY})`)
-
-    polygonWithTextList.value.forEach((polygonWithText) => {
-      console.log(polygonWithText.options)
-    })
+    if (!obj) {
+      return
+    }
+    const index = polygonWithTextList.value.findIndex(polygonWithText => polygonWithText.options.name === obj.name)
+    const modifiedObj = polygonWithTextList.value[index]
+    if (!modifiedObj) {
+      return
+    }
+    storeLayerList.value[index] = { ...storeLayerList.value[index], ...modifiedObj.options }
   })
 }
 

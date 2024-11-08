@@ -26,6 +26,7 @@
     "@vueuse/components": "^11.2.0",
     "@vueuse/nuxt": "^11.2.0",
     "arco-design-nuxt-module": "^0.1.0",
+    "axios": "^1.7.7",
     "consola": "^3.2.3",
     "eslint": "^9.14.0",
     "eslint-plugin-format": "^0.1.2",

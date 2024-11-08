@@ -16,7 +16,8 @@ function onResize({ width, height }: { width: number, height: number }) {
 const debouncedOnResize = useDebounceFn(onResize, 300)
 
 onMounted(() => {
-  initCanvasBasicPlugin(canvasRef, wrapRef)
+  console.warn('[PolygonLink.vue]:', 'onMounted')
+  initCanvasBasicPlugin(canvasRef, wrapRef, props.edit)
   // 添加滚轮缩放事件
   onWheelPlugin()
   // 添加鼠标拖拽事件
@@ -28,6 +29,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  console.warn('[PolygonLink.vue]:', 'onUnmounted')
   // 解绑滚轮缩放事件
   unbindGrabPlugin()
   if (props.edit) {

@@ -5,43 +5,26 @@ const emits = defineEmits(['fetchData'])
 
 const ModalVisible = ref(false)
 const selectedKeys = ref<string[]>([])
+const riskType = ref<'obj' | 'unit'>('obj')
+const keyword = ref('')
 const rowSelection: TableRowSelection = {
   type: 'radio',
 }
 const currentPolygonWithTextName = shallowRef('')
 
-const renderData = ref<AnalysisObject[]>([
-  {
-    id: '1',
-    name: '中控楼',
-    level: 1,
-  },
-  {
-    id: '2',
-    name: '35kV变电所2',
-    level: 2,
-  },
-  {
-    id: '3',
-    name: '35kV变电所3',
-    level: 3,
-  },
-  {
-    id: '4',
-    name: '35kV变电所4',
-    level: 4,
-  },
-  {
-    id: '5',
-    name: '35kV变电所5',
-    level: 2,
-  },
-  {
-    id: '6',
-    name: '35kV变电所6',
-    level: 2,
-  },
-])
+const renderData = computed(() => {
+  if (riskType.value === 'obj')
+    return globalObjList.value
+  else
+    return globalUnitList.value
+})
+
+const searchRenderData = computed(() => {
+  if (keyword.value === '')
+    return renderData.value
+  else
+    return renderData.value.filter(item => item.name.includes(keyword.value))
+})
 
 function open(polygonWithTextName: string) {
   console.warn('[BindRiskAnalysisObjectModal.vue]:', 'polygon:created', polygonWithTextName)
@@ -106,8 +89,19 @@ onUnmounted(() => {
         <div>绑定风险分析对象</div>
       </div>
     </template>
-    <div>
-      <ATable :data="renderData" row-key="id" :row-selection="rowSelection" :selected-keys="selectedKeys" @select="onSelect">
+    <div class="flex flex-col gap-2">
+      <div class="flex justify-between">
+        <ARadioGroup v-model:model-value="riskType" type="button">
+          <ARadio value="obj">
+            对象
+          </ARadio>
+          <ARadio value="unit">
+            单元
+          </ARadio>
+        </ARadioGroup>
+        <AInputSearch v-model="keyword" class="w-320px!" placeholder="输入风险分析对象" />
+      </div>
+      <ATable :data="searchRenderData" row-key="id" :row-selection="rowSelection" :selected-keys="selectedKeys" @select="onSelect">
         <template #columns>
           <ATableColumn title="风险分析对象名称" data-index="name" :width="400" />
           <ATableColumn title="风险等级" data-index="level" :width="150">

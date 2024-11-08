@@ -42,8 +42,15 @@ function getBoundingBox(points: fabric.Point[]): { left: number, top: number, wi
   return { left: minX, top: minY, width, height }
 }
 
+function adjustPoints(polygonPoints: { x: number, y: number }[], boundingBox: { left: number, top: number, width: number, height: number }) {
+  return polygonPoints.map(point => ({
+    x: point.x - boundingBox.left,
+    y: point.y - boundingBox.top,
+  }))
+}
+
 export function startPolygonDrawing() {
-  const canvas = canvasFabric.value!
+  const canvas = canvasFabric.value as fabric.Canvas
   // Initialize canvas event handlers for polygon drawing
   canvas.on('mouse:down', onMouseDown)
   canvas.on('mouse:move', onMouseMove)
@@ -61,7 +68,7 @@ export function startPolygonDrawing() {
 }
 
 export function stopPolygonDrawing() {
-  const canvas = canvasFabric.value!
+  const canvas = canvasFabric.value as fabric.Canvas
   isDrawingMode.value = false
   canvas.selection = true
   canvas.defaultCursor = 'default'
@@ -82,7 +89,7 @@ function onMouseDown(event: fabric.IEvent) {
   if (!isDrawingMode.value || !event.pointer)
     return
 
-  const canvas = canvasFabric.value!
+  const canvas = canvasFabric.value as fabric.Canvas
   const pointer = canvas.getPointer(event.e)
   const { x, y } = pointer
 
@@ -125,7 +132,7 @@ function onMouseMove(event: fabric.IEvent) {
   if (!isDrawingMode.value || points.length === 0 || !event.pointer)
     return
 
-  const canvas = canvasFabric.value!
+  const canvas = canvasFabric.value as fabric.Canvas
   const pointer = canvas.getPointer(event.e)
 
   // Remove the last temporary line if it exists
@@ -157,10 +164,11 @@ function onDoubleClick(_event: fabric.IEvent) {
   // console.warn(polygonPoints)
   const boundingBox = getBoundingBox(points)
   // console.warn(boundingBox)
+  const absolutePoints = adjustPoints(polygonPoints, boundingBox)
   const name = `polygon-${nanoid(4)}`
 
   const polygonWithText = new PolygonWithText(canvas, {
-    points: polygonPoints,
+    points: absolutePoints,
     left: boundingBox.left,
     top: boundingBox.top,
     width: boundingBox.width,
@@ -190,7 +198,12 @@ function onDoubleClick(_event: fabric.IEvent) {
 }
 
 export function onPolygonInitAdd(options: PolygonWithTextOptions) {
-  const canvas = canvasFabric.value!
+  console.log('onPolygonInitAdd', JSON.stringify(canvasFabric.value))
+  if (canvasFabric.value === undefined) {
+    console.error('请先初始化画布')
+    return
+  }
+  const canvas = canvasFabric.value
   const polygonWithText = new PolygonWithText(canvas, options)
   polygonWithTextList.value.push(polygonWithText)
 }

@@ -26,12 +26,13 @@ function createGridPattern() {
  * 更新画布尺寸
  */
 export function updateCanvasSize(wrapWidth: number, wrapHeight: number) {
-  if (wrapHeight === 0 || wrapWidth === 0)
-    return
   const canvas = canvasFabric.value!
+  if (wrapHeight === 0 || wrapWidth === 0 || canvas === undefined)
+    return
   // 更新画布尺寸
   // canvas.setWidth(wrapWidth)
   // canvas.setHeight(wrapHeight)
+  console.log(JSON.stringify(canvas))
   canvas.setDimensions({
     width: wrapWidth,
     height: wrapHeight,
@@ -58,18 +59,24 @@ export function updateCanvasSize(wrapWidth: number, wrapHeight: number) {
   console.warn('[updateCanvasSize]', wrapHeight)
 }
 // 初始化画布
-export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | null>, wrapRef: ShallowRef<HTMLDivElement | null>) {
+export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | null>, wrapRef: ShallowRef<HTMLDivElement | null>, edit: boolean) {
   // 创建fabric画布
   if (!wrapRef.value)
     return
   const wrapWidth = wrapRef.value.clientWidth
   const wrapHeight = wrapRef.value.clientHeight
-  const canvas = new fabric.Canvas(canvasRef.value, {
-    width: wrapWidth,
-    height: wrapHeight,
-    backgroundColor: '#E5E5E5',
-    selection: false,
-  })
+  const canvas = edit
+    ? new fabric.Canvas(canvasRef.value, {
+      width: wrapWidth,
+      height: wrapHeight,
+      backgroundColor: '#E5E5E5',
+      selection: false,
+    })
+    : new fabric.StaticCanvas(canvasRef.value, {
+      width: wrapWidth,
+      height: wrapHeight,
+      backgroundColor: '#E5E5E5',
+    })
 
   // 创建中央白色画布
   const centerRect = new fabric.Rect({
@@ -100,5 +107,7 @@ export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | 
 export function disposeCanvasBasicPlugin() {
   if (canvasFabric.value) {
     canvasFabric.value.dispose()
+    console.warn('[disposeCanvasBasicPlugin]')
+    canvasFabric.value = undefined
   }
 }

@@ -18,12 +18,6 @@ interface PolygonDrawnEvent {
   polygon: fabric.Polygon
 }
 
-interface AnalysisObject {
-  id: string
-  name: string
-  level: number
-}
-
 interface PolygonWithTextOptions {
   left: number
   top: number
@@ -39,7 +33,7 @@ interface PolygonWithTextOptions {
   textColor?: string
   // 绑定风险分析对象ID
   riskAnalysisObjectId?: string
-  riskAnalysisObjectLevel?: number
+  riskAnalysisObjectLevel?: string
   // pageId
   pageId: string
 }
@@ -47,4 +41,10 @@ interface PolygonWithTextOptions {
 interface PageRecord {
   id: string
   name: string
+}
+
+interface ObjUnitRecord {
+  id: string
+  name: string
+  level: string
 }

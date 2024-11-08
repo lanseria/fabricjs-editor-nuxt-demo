@@ -1,13 +1,17 @@
-import type { PolygonWithText } from './entity/PolygonWithText'
+import type { PolygonWithText } from './PolygonLink/entity/PolygonWithText'
 
 export const storePageList = useLocalStorage<PageRecord[]>('storePageList', [])
 
 export const storeLayerList = useLocalStorage<PolygonWithTextOptions[]>('storeLayerList', [])
 
+export const globalObjList = ref<ObjUnitRecord[]>([])
+export const globalUnitList = ref<ObjUnitRecord[]>([])
+
 export const currentPageId = ref('')
 
-export const canvasFabric = shallowRef<fabric.Canvas>()
+export const canvasFabric = shallowRef<fabric.Canvas | fabric.StaticCanvas>()
 watchEffect(() => {
+  console.warn('[store.ts]:', 'canvasFabric', canvasFabric.value)
   const objectList = canvasFabric.value?.getObjects()
   if (objectList?.length !== 0) {
     const objectNameList = objectList?.map(item => item.name)

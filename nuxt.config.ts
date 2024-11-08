@@ -1,3 +1,4 @@
+import { env } from 'node:process'
 import { appDescription } from './app/constants/index'
 
 export default defineNuxtConfig({
@@ -61,11 +62,21 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2024-08-14',
   vite: {
+    server: {
+      proxy: {
+        '/safedatapushboshite': {
+          target: env.NUXT_VITE_SERVER_PROXY_TARGET,
+          ws: true,
+          changeOrigin: true,
+        },
+      },
+    },
     optimizeDeps: {
       include: [
         'fabric',
         'mitt',
         'nanoid',
+        'axios',
         '@arco-design/web-vue/es/table/index',
         '@arco-design/web-vue/es/modal/index',
         '@arco-design/web-vue/es/table/style/css.js',

@@ -4,6 +4,10 @@ import { appName } from '~/constants'
 useHead({
   title: appName,
 })
+
+onMounted(() => {
+  queryAllData()
+})
 </script>
 
 <template>

@@ -18,9 +18,9 @@ const showBack = computed(() => route.path !== '/')
         <div>风险等级</div>
         <div class="h-10px w-full" />
         <div class="flex flex-col gap-2">
-          <div v-for="i in 4" :key="i" class="flex items-center gap-2">
-            <div class="h-20px w-20px" :style="{ backgroundColor: levelColorMap[i] }" />
-            <div>{{ riskLevelStatusMap[i] }}</div>
+          <div v-for="i in riskLevelList" :key="i.label" class="flex items-center gap-2">
+            <div class="h-20px w-20px" :style="{ backgroundColor: i.bgColor }" />
+            <div>{{ i.label }}</div>
           </div>
         </div>
       </div>

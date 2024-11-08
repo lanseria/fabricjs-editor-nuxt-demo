@@ -1,13 +1,13 @@
 import { fabric } from 'fabric'
 
 export class PolygonWithText {
-  private canvas: fabric.Canvas
+  private canvas: fabric.Canvas | fabric.StaticCanvas
   private polygon: fabric.Polygon
   private text: fabric.Text
   private group: fabric.Group
   public options: PolygonWithTextOptions
 
-  constructor(canvas: fabric.Canvas, options: PolygonWithTextOptions) {
+  constructor(canvas: fabric.Canvas | fabric.StaticCanvas, options: PolygonWithTextOptions) {
     this.canvas = canvas
     this.options = options
 
@@ -22,8 +22,8 @@ export class PolygonWithText {
 
     // 创建文本
     this.text = new fabric.Text(options.text, {
-      left: options.left + options.width / 2,
-      top: options.top + options.height / 2,
+      left: options.width / 2,
+      top: options.height / 2,
       fontSize: options.fontSize || DEFAULT_TEXT_SIZE,
       fill: options.textColor || DEFAULT_TEXT_COLOR,
       originX: 'center',
@@ -35,6 +35,8 @@ export class PolygonWithText {
       selectable: true,
       hasControls: true,
       name: options.name,
+      left: options.left,
+      top: options.top,
     })
 
     // 添加事件监听器
@@ -120,7 +122,7 @@ export class PolygonWithText {
   // }
 
   // 通过绑定风险分析对象改变多边形颜色以及文字
-  public bindRiskAnalysis(riskAnalysis: AnalysisObject) {
+  public bindRiskAnalysis(riskAnalysis: ObjUnitRecord) {
     const bgColor = levelColorMap[riskAnalysis.level] || DEFAULT_BG_COLOR
     const textColor = levelTextColorMap[riskAnalysis.level] || DEFAULT_TEXT_COLOR
     this.updateText(riskAnalysis.name, textColor)
