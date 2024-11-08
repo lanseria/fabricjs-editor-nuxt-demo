@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { canvasIsReady } from '~/composables/store'
+
 const route = useRoute<'hi-id'>()
 const id = computed(() => route.params.id)
 const pageName = computed(() => {
@@ -33,9 +35,11 @@ function toggleDrawMode() {
   }
 }
 onMounted(async () => {
-  console.warn('[id.vue]:', 'onMounted')
-  await nextTick()
-  storeLayerList.value.forEach((item) => {
+  console.warn('[id.vue]:', 'onMounted', canvasIsReady.value)
+  await until(canvasIsReady).toBe(true)
+  await until(canvasFabric).not.toBe(undefined)
+  console.warn('[id.vue]:', 'onPolygonInitAdd')
+  globalLayerList.value.forEach((item) => {
     onPolygonInitAdd(item)
   })
 })
@@ -61,7 +65,7 @@ onUnmounted(() => {
         </div>
       </div>
       <div class="flex flex-col">
-        <div v-for="item in storeLayerList" :key="item.name" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">
+        <div v-for="item in globalLayerList" :key="item.name" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">
           <div class="flex flex-col items-start gap-1">
             <div>
               {{ item.text }}

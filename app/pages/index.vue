@@ -2,10 +2,10 @@
 const selectPageId = ref('')
 
 const pageListWithLayer = computed (() => {
-  return storePageList.value.map((item) => {
+  return globalPageList.value.map((item) => {
     return {
       ...item,
-      layerList: storeLayerList.value.filter(layer => layer.pageId === item.id),
+      layerList: globalLayerList.value.filter(layer => layer.pageId === item.id),
     }
   })
 })
@@ -14,7 +14,7 @@ function onDesignPage(record: PageRecord) {
 }
 async function onSelect(record: PageRecord) {
   selectPageId.value = record.id
-  const layerList = storeLayerList.value.filter(layer => layer.pageId === record.id)
+  const layerList = globalLayerList.value.filter(layer => layer.pageId === record.id)
   layerList.forEach((item) => {
     onPolygonInitAdd(item)
   })

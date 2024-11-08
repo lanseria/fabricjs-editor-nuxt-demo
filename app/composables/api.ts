@@ -30,3 +30,30 @@ export function queryObjList(): Promise<any> {
 export function queryUnitList(): Promise<any> {
   return request.get('/unit/list')
 }
+
+export function queryPageList(): Promise<any> {
+  return request.get('/page/list')
+}
+
+export function postPage(data: PageRecord): Promise<boolean> {
+  return request.post('/page', data)
+}
+
+export function deletePage(id: string): Promise<boolean> {
+  return request.delete(`/page/${id}`)
+}
+
+export function queryLayerList(): Promise<any> {
+  return request.get('/layer/list')
+}
+
+export function postLayer(data: PolygonWithTextOptions): Promise<boolean> {
+  return request.post('/layer', data)
+}
+
+export function putLayer(data: PolygonWithTextOptions): Promise<boolean> {
+  return request.put('/layer', data)
+}
+export function deleteLayer(id: string): Promise<boolean> {
+  return request.delete(`/layer/${id}`)
+}

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { vElementSize } from '@vueuse/components'
+import { canvasIsReady } from '~/composables/store'
 
 const props = defineProps({
   edit: {
@@ -15,9 +16,11 @@ function onResize({ width, height }: { width: number, height: number }) {
 }
 const debouncedOnResize = useDebounceFn(onResize, 300)
 
-onMounted(() => {
+onMounted(async () => {
+  await until(canvasFabric).toBe(undefined)
   console.warn('[PolygonLink.vue]:', 'onMounted')
   initCanvasBasicPlugin(canvasRef, wrapRef, props.edit)
+  canvasIsReady.value = true
   // 添加滚轮缩放事件
   onWheelPlugin()
   // 添加鼠标拖拽事件
@@ -38,6 +41,7 @@ onUnmounted(() => {
   }
   // 卸载fabric画布
   disposeCanvasBasicPlugin()
+  canvasIsReady.value = false
 })
 </script>
 

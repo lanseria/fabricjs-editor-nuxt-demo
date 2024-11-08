@@ -9,33 +9,36 @@ export function initPageRecord(): PageRecord {
   return {
     id,
     name: `页面_${id}`,
-    children: [],
   }
 }
 
-export function onPageAdd() {
-  storePageList.value.push(initPageRecord())
+export async function onPageAdd() {
+  await postPage(initPageRecord())
+  await fetchPageList()
 }
-export function onPageDelete(item: PageRecord) {
-  storePageList.value = storePageList.value.filter(i => i.id !== item.id)
+export async function onPageDelete(item: PageRecord) {
+  await deletePage(item.id)
+  await fetchPageList()
 }
 
-export function onLayerAdd(options: PolygonWithTextOptions) {
+export async function onLayerAdd(options: PolygonWithTextOptions) {
   console.warn('[onLayerAdd]:', options)
   if (!currentPageId.value) {
     console.error('请先选择页面ID', currentPageId.value)
     Message.warning('请先选择页面ID')
     return
   }
-  const currentLayerList = storeLayerList.value.filter(i => i.pageId === currentPageId.value)
+  const currentLayerList = globalLayerList.value.filter(i => i.pageId === currentPageId.value)
   if (currentLayerList.find(i => i.name === options.name)) {
     // 更新
-    const idx = currentLayerList.findIndex(i => i.name === options.name)
-    storeLayerList.value[idx] = { ...options }
+    // const idx = currentLayerList.findIndex(i => i.name === options.name)
+    await putLayer(options)
+    // storeLayerList.value[idx] = { ...options }
   }
   else {
     // 新增
-    storeLayerList.value.push(options)
+    await postLayer(options)
+    // storeLayerList.value.push(options)
   }
   triggerRef(storePageList)
 }

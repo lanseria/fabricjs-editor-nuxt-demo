@@ -198,7 +198,6 @@ function onDoubleClick(_event: fabric.IEvent) {
 }
 
 export function onPolygonInitAdd(options: PolygonWithTextOptions) {
-  console.log('onPolygonInitAdd', JSON.stringify(canvasFabric.value))
   if (canvasFabric.value === undefined) {
     console.error('请先初始化画布')
     return

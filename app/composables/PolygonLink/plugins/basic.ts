@@ -32,7 +32,6 @@ export function updateCanvasSize(wrapWidth: number, wrapHeight: number) {
   // 更新画布尺寸
   // canvas.setWidth(wrapWidth)
   // canvas.setHeight(wrapHeight)
-  console.log(JSON.stringify(canvas))
   canvas.setDimensions({
     width: wrapWidth,
     height: wrapHeight,
@@ -100,6 +99,7 @@ export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | 
     repeat: 'repeat',
   }, canvas.renderAll.bind(canvas))
   // 保存画布
+  console.warn('[basic.ts]', 'canvas 初始化')
   canvasFabric.value = canvas
   updateCanvasSize(wrapWidth, wrapHeight)
 }
@@ -107,7 +107,7 @@ export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | 
 export function disposeCanvasBasicPlugin() {
   if (canvasFabric.value) {
     canvasFabric.value.dispose()
-    console.warn('[disposeCanvasBasicPlugin]')
+    console.warn('[basic.ts]', 'canvas 卸载')
     canvasFabric.value = undefined
   }
 }

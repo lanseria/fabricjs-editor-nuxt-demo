@@ -6,9 +6,12 @@ export const storeLayerList = useLocalStorage<PolygonWithTextOptions[]>('storeLa
 
 export const globalObjList = ref<ObjUnitRecord[]>([])
 export const globalUnitList = ref<ObjUnitRecord[]>([])
+export const globalPageList = ref<PageRecord[]>([])
+export const globalLayerList = ref<PolygonWithTextOptions[]>([])
 
 export const currentPageId = ref('')
 
+export const canvasIsReady = ref(false)
 export const canvasFabric = shallowRef<fabric.Canvas | fabric.StaticCanvas>()
 watchEffect(() => {
   console.warn('[store.ts]:', 'canvasFabric', canvasFabric.value)
