@@ -127,6 +127,11 @@ export class PolygonWithText {
     this.polygon.set('fill', newColor)
   }
 
+  public setMoveable(value: boolean) {
+    this.group.set('lockMovementX', !value)
+    this.group.set('lockMovementY', !value)
+  }
+
   // 获取组对象
   // private getGroup() {
   //   return this.group

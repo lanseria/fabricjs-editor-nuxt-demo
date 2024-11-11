@@ -38,14 +38,14 @@ function toggleDrawMode() {
     return
   }
   currentPageId.value = id.value
-  if (isDrawingMode.value) {
-    console.warn('[PolygonBtn.vue]:', 'stopPolygonDrawing')
-    stopPolygonDrawing()
-  }
-  else {
-    console.warn('[PolygonBtn.vue]:', 'startPolygonDrawing')
-    startPolygonDrawing()
-  }
+  // if (isDrawingMode.value) {
+  //   console.warn('[PolygonBtn.vue]:', 'stopPolygonDrawing')
+  //   stopPolygonDrawing()
+  // }
+  // else {
+  console.warn('[PolygonBtn.vue]:', 'startPolygonDrawing')
+  startPolygonDrawing()
+  // }
 }
 onMounted(async () => {
   console.warn('[id.vue]:', 'onMounted', canvasIsReady.value)
@@ -66,9 +66,49 @@ onUnmounted(() => {
 
 <template>
   <div class="h-full flex shrink grow basis-0 overflow-hidden">
-    <div class="flex flex-col border-r-1px border-gray-1">
-      <ToolBtn icon-name="i-carbon-area-custom" tooltip-name="多边形" :active="isDrawingMode" @click="toggleDrawMode()" />
-      <PolygonLinkBindRiskAnalysisObjectModal />
+    <div class="flex flex-col justify-between border-r-1px border-gray-1">
+      <div class="flex flex-col items-center">
+        <ToolBtn icon-name="i-carbon-cursor-1" tooltip-name="移动" :active="isSelectMode" @click="setToolActive('select')" />
+        <ToolBtn icon-name="i-carbon-area-custom" tooltip-name="多边形" :active="isDrawingMode" @click="toggleDrawMode()" />
+        <PolygonLinkBindRiskAnalysisObjectModal />
+      </div>
+      <div class="flex flex-col items-center">
+        <ATrigger trigger="click" :unmount-on-close="false" position="rb">
+          <ToolBtn icon-name="i-carbon-help" tooltip-name="帮助" />
+          <template #content>
+            <div class="w-300px border-1px border-gray-1 px-4 py-2 shadow">
+              <div class="text-14px font-bold">
+                帮助提示
+              </div>
+              <div class="h-10px w-full" />
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between gap-2">
+                  <ToolBtn icon-name="i-carbon-cursor-1 text-blue-6" tooltip-name="移动对象" />
+                  <div>移动对象</div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between gap-2">
+                  <ToolBtn icon-name="i-carbon-area-custom text-blue-6" tooltip-name="绘制区域" />
+                  <div>绘制区域</div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between gap-2">
+                  <ToolBtn icon-name="i-carbon-save text-blue-6" tooltip-name="保存页面" />
+                  <div>保存页面</div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between gap-2">
+                  <div>自由移动画布</div>
+                  <div>空格 + 鼠标拖动</div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </ATrigger>
+      </div>
     </div>
     <div class="w-300px flex-none border-r-1px border-gray-1">
       <div class="flex items-center justify-between gap-2 border-b-1px border-gray-1 px-4 py-2">
@@ -80,7 +120,7 @@ onUnmounted(() => {
             图层
           </div>
         </div>
-        <ToolBtn icon-name="i-carbon-save text-blue-6" tooltip-name="报错" @click="onPageLayerSave()" />
+        <ToolBtn icon-name="i-carbon-save text-blue-6" tooltip-name="保存" @click="onPageLayerSave()" />
       </div>
       <div class="flex flex-col">
         <AEmpty v-if="currentPageLayerList.length === 0" />

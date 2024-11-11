@@ -20,3 +20,17 @@ export function queryAllData() {
   // fetchPageList()
   // fetchLayerList()
 }
+
+export function setToolActive(tool: ToolActive) {
+  toolActive.value = tool
+  if (tool === 'select') {
+    polygonWithTextList.value.forEach((item) => {
+      item.setMoveable(true)
+    })
+  }
+  else {
+    polygonWithTextList.value.forEach((item) => {
+      item.setMoveable(false)
+    })
+  }
+}

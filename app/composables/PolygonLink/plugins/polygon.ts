@@ -1,9 +1,11 @@
+import type { WatchHandle } from 'vue'
 import { fabric } from 'fabric'
 import { nanoid } from 'nanoid'
 
 let lineObjects: fabric.Line[] = []
 let activePolygon: fabric.Polygon | null = null
 const points: fabric.Point[] = []
+let watchEffectOfEsc: WatchHandle | null = null
 
 function convertPoints(points: fabric.Point[]): { x: number, y: number }[] {
   return points.map(point => ({
@@ -55,9 +57,9 @@ export function startPolygonDrawing() {
   canvas.on('mouse:down', onMouseDown)
   canvas.on('mouse:move', onMouseMove)
   canvas.on('mouse:dblclick', onDoubleClick)
-  isDrawingMode.value = true
+  setToolActive('polygon')
   canvas.selection = false
-  canvas.defaultCursor = 'crosshair'
+  canvas.setCursor('crosshair')
   points.length = 0
   lineObjects.forEach(line => canvas.remove(line))
   lineObjects = []
@@ -65,13 +67,18 @@ export function startPolygonDrawing() {
     canvas.remove(activePolygon)
     activePolygon = null
   }
+  watchEffectOfEsc = watchEffect(() => {
+    if (isEscPressed?.value) {
+      stopPolygonDrawing()
+    }
+  })
 }
 
 export function stopPolygonDrawing() {
   const canvas = canvasFabric.value as fabric.Canvas
-  isDrawingMode.value = false
+  setToolActive('select')
   canvas.selection = true
-  canvas.defaultCursor = 'default'
+  canvas.setCursor('default')
   points.length = 0
   lineObjects.forEach(line => canvas.remove(line))
   lineObjects = []
@@ -83,6 +90,7 @@ export function stopPolygonDrawing() {
   canvas.off('mouse:down', onMouseDown)
   canvas.off('mouse:move', onMouseMove)
   canvas.off('mouse:dblclick', onDoubleClick)
+  watchEffectOfEsc?.stop()
 }
 
 function onMouseDown(event: fabric.IEvent) {
@@ -133,6 +141,7 @@ function onMouseMove(event: fabric.IEvent) {
     return
 
   const canvas = canvasFabric.value as fabric.Canvas
+  canvas.setCursor('crosshair')
   const pointer = canvas.getPointer(event.e)
 
   // Remove the last temporary line if it exists
@@ -178,7 +187,7 @@ function onDoubleClick(_event: fabric.IEvent) {
     fill: 'rgba(0,0,0,0.1)',
     stroke: '#000',
     strokeWidth: 1,
-    fontSize: 24,
+    fontSize: DEFAULT_TEXT_SIZE,
     textColor: '#000',
     pageId: currentPageId.value,
   })

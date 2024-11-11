@@ -60,3 +60,5 @@ interface ObjUnitRecord {
   name: string
   level: string
 }
+
+type ToolActive = 'select' | 'polygon'

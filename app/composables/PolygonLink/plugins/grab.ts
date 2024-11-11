@@ -1,11 +1,16 @@
 import type { fabric } from 'fabric'
+import type { WatchHandle } from 'vue'
 
 let lastPosX = 0
 let lastPosY = 0
+let watchEffectOfSpace: WatchHandle | null = null
 
 // 添加鼠标按下事件
 function onMouseDown(opt: fabric.IEvent<MouseEvent>) {
   const canvas = canvasFabric.value!
+  if (isDrawingMode.value) {
+    return
+  }
   if (!isSpacePressed && !canvas)
     return
   console.warn('[onMouseDown]')
@@ -21,6 +26,9 @@ function onMouseDown(opt: fabric.IEvent<MouseEvent>) {
 // 添加鼠标移动事件
 function onMouseMove(opt: fabric.IEvent<MouseEvent>) {
   const canvas = canvasFabric.value!
+  if (isDrawingMode.value) {
+    return
+  }
   if (!isSpacePressed && !canvas)
     return
   if (isPanning.value) {
@@ -32,11 +40,19 @@ function onMouseMove(opt: fabric.IEvent<MouseEvent>) {
     lastPosX = opt.e.clientX
     lastPosY = opt.e.clientY
   }
+  else {
+    if (isSpacePressed?.value) {
+      canvas.setCursor('grab')
+    }
+  }
 }
 
 // 添加鼠标松开事件
 function onMouseUp() {
   const canvas = canvasFabric.value!
+  if (isDrawingMode.value) {
+    return
+  }
   if (!isSpacePressed && !canvas)
     return
   console.warn('[onMouseUp]')
@@ -56,6 +72,14 @@ export function bindGrabPlugin() {
 
   // 添加鼠标松开事件
   canvas.on('mouse:up', onMouseUp)
+  watchEffectOfSpace = watchEffect(() => {
+    if (isDrawingMode.value) {
+      return
+    }
+    if (isSpacePressed!.value) {
+      canvas.setCursor('grab')
+    }
+  })
 }
 
 export function unbindGrabPlugin() {
@@ -63,4 +87,5 @@ export function unbindGrabPlugin() {
   canvas.off('mouse:down')
   canvas.off('mouse:move')
   canvas.off('mouse:up')
+  watchEffectOfSpace?.stop()
 }
