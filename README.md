@@ -1,6 +1,6 @@
 # Polygon Link
 
-设计图
+## 设计图
 
 https://js.design/f/FYeggV?p=5ywOngl0pw&mode=design&linkelement=3-16
 
@@ -13,3 +13,11 @@ https://js.design/f/FYeggV?p=5ywOngl0pw&mode=design&linkelement=3-16
 - page[] 展示一个 画板 右边一个图例
   - layer[] PolygonWithTextList 进入画板，左边是工具栏，右边是图层
     - object PolygonWithText
+
+## 部署
+
+```bash
+rsync -av --delete dist/ root@119.3.111.163:/root/bst/design/
+ssh root@119.3.111.163
+docker cp /root/bst/design/. safety-php:/var/www/bstriskpic/
+```

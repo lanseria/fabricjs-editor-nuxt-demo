@@ -28,10 +28,10 @@ async function onSelect(record: PageRecord) {
 }
 onMounted(async () => {
   console.warn('[index.vue]:', 'onMounted')
-  await fetchLayerList()
-  await fetchPageList()
   await until(canvasIsReady).toBe(true)
   await until(canvasFabric).not.toBe(undefined)
+  await fetchLayerList()
+  await fetchPageList()
   if (globalPageList.value.length > 0) {
     onSelect(globalPageList.value[0]!)
   }
