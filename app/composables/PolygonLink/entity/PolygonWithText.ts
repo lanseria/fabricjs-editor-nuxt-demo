@@ -37,6 +37,10 @@ export class PolygonWithText {
       name: options.name,
       left: options.left,
       top: options.top,
+      lockRotation: true,
+      lockScalingFlip: true,
+      lockScalingX: true,
+      lockScalingY: true,
     })
 
     // 添加事件监听器
@@ -52,9 +56,9 @@ export class PolygonWithText {
     })
 
     // 监听缩放事件
-    this.group.on('scaling', () => {
-      this.syncSizeToOptions()
-    })
+    // this.group.on('scaling', () => {
+    //   this.syncSizeToOptions()
+    // })
 
     // 监听旋转事件
     // this.group.on('rotating', () => {
@@ -64,12 +68,18 @@ export class PolygonWithText {
     // 监听修改完成事件
     this.group.on('modified', () => {
       this.syncAllPropertiesToOptions()
-      triggerRef(canvasFabric)
+      // triggerRef(canvasFabric)
     })
+  }
+
+  private syncGlobalOptions() {
+    const globalIdx = globalLayerList.value.findIndex(layer => layer.name === this.options.name)
+    globalLayerList.value[globalIdx] = { ...globalLayerList.value[globalIdx], ...this.options }
   }
 
   // 同步位置到 options
   private syncPositionToOptions() {
+    console.warn('[syncPositionToOptions]:', this.group.name, this.group.left)
     if (this.group) {
       this.options.left = this.group.left ?? 0
       this.options.top = this.group.top ?? 0
@@ -100,6 +110,7 @@ export class PolygonWithText {
   private syncAllPropertiesToOptions() {
     this.syncPositionToOptions()
     this.syncSizeToOptions()
+    this.syncGlobalOptions()
   }
 
   // 更新文本内容

@@ -26,10 +26,15 @@ async function onSelect(record: PageRecord) {
     onPolygonInitAdd(item, false)
   })
 }
-onMounted(() => {
+onMounted(async () => {
   console.warn('[index.vue]:', 'onMounted')
-  fetchPageList()
-  fetchLayerList()
+  await fetchLayerList()
+  await fetchPageList()
+  await until(canvasIsReady).toBe(true)
+  await until(canvasFabric).not.toBe(undefined)
+  if (globalPageList.value.length > 0) {
+    onSelect(globalPageList.value[0]!)
+  }
 })
 onUnmounted(() => {
   globalLayerList.value = []
@@ -48,18 +53,22 @@ onUnmounted(() => {
         <ToolBtn icon-name="i-carbon-add" tooltip-name="添加页面" @click="onPageAdd()" />
       </div>
       <div class="flex flex-col">
+        <AEmpty v-if="pageListWithLayer.length === 0" />
         <div
           v-for="item in pageListWithLayer"
           :key="item.id"
           class="flex items-center justify-between px-2 py-1 hover:bg-gray-50"
-          :class="{ 'text-blue-5 font-bold': item.id === selectPageId }"
           @click="onSelect(item)"
         >
-          <div>{{ item.name }}<span>({{ item.layerList.length }})</span></div>
+          <div
+            :class="{ 'text-blue-5 font-bold': item.id === selectPageId }"
+          >
+            {{ item.name }}<span>({{ item.layerList.length }})</span>
+          </div>
           <div class="flex">
-            <ToolBtn icon-name="i-carbon-area-custom" tooltip-name="设计" @click.stop="onDesignPage(item)" />
-            <ToolBtn icon-name="i-carbon-edit" tooltip-name="编辑" @click.stop="onPageEdit(item)" />
-            <ToolBtn icon-name="i-carbon-trash-can" tooltip-name="删除" @click.stop="onPageDelete(item)" />
+            <ToolBtn icon-name="i-carbon-area-custom text-orange-6" tooltip-name="设计" @click.stop="onDesignPage(item)" />
+            <ToolBtn icon-name="i-carbon-edit text-blue-6" tooltip-name="编辑" @click.stop="onPageEdit(item)" />
+            <ToolBtn icon-name="i-carbon-trash-can text-red-6" tooltip-name="删除" @click.stop="onPageDelete(item)" />
           </div>
         </div>
       </div>

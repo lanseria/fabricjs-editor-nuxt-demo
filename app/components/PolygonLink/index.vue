@@ -2,12 +2,12 @@
 import { vElementSize } from '@vueuse/components'
 import { canvasIsReady } from '~/composables/store'
 
-const props = defineProps({
-  edit: {
-    type: Boolean,
-    default: false,
-  },
-})
+// const props = defineProps({
+//   edit: {
+//     type: Boolean,
+//     default: false,
+//   },
+// })
 const canvasRef = useTemplateRef('canvasRef')
 const wrapRef = useTemplateRef('wrapRef')
 
@@ -25,20 +25,20 @@ onMounted(async () => {
   onWheelPlugin()
   // 添加鼠标拖拽事件
   bindGrabPlugin()
-  if (props.edit) {
-    // 监听所有对象变化
-    onObjectChange()
-  }
+  // if (props.edit) {
+  // 监听所有对象变化
+  // onObjectChange()
+  // }
 })
 
 onUnmounted(() => {
   console.warn('[PolygonLink.vue]:', 'onUnmounted')
   // 解绑滚轮缩放事件
   unbindGrabPlugin()
-  if (props.edit) {
-    // 卸载监听所有对象变化
-    offObjectChange()
-  }
+  // if (props.edit) {
+  // 卸载监听所有对象变化
+  // offObjectChange()
+  // }
   // 卸载fabric画布
   disposeCanvasBasicPlugin()
   canvasIsReady.value = false

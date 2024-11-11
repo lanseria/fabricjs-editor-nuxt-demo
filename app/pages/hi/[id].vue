@@ -71,16 +71,19 @@ onUnmounted(() => {
       <PolygonLinkBindRiskAnalysisObjectModal />
     </div>
     <div class="w-300px flex-none border-r-1px border-gray-1">
-      <div class="flex items-center gap-2 border-b-1px border-gray-1 px-4 py-2">
-        <div class="text-14px font-bold">
-          {{ pageName }}
+      <div class="flex items-center justify-between gap-2 border-b-1px border-gray-1 px-4 py-2">
+        <div class="flex items-center">
+          <div class="text-14px font-bold">
+            {{ pageName }}
+          </div>
+          <div>
+            图层
+          </div>
         </div>
-        <div>
-          图层
-        </div>
-        <ToolBtn icon-name="i-carbon-save" tooltip-name="报错" @click="onPageLayerSave()" />
+        <ToolBtn icon-name="i-carbon-save text-blue-6" tooltip-name="报错" @click="onPageLayerSave()" />
       </div>
       <div class="flex flex-col">
+        <AEmpty v-if="currentPageLayerList.length === 0" />
         <div v-for="item in currentPageLayerList" :key="item.name" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">
           <div class="flex flex-col items-start gap-1">
             <div>
@@ -98,12 +101,12 @@ onUnmounted(() => {
             </div>
           </div>
           <div class="flex">
-            <ToolBtn icon-name="i-carbon-edit" tooltip-name="编辑" @click="onLayerEdit(item)" />
-            <ToolBtn icon-name="i-carbon-trash-can" tooltip-name="删除" @click="onLayerDelete(item)" />
+            <ToolBtn icon-name="i-carbon-edit text-blue-6" tooltip-name="编辑" @click="onLayerEdit(item)" />
+            <ToolBtn icon-name="i-carbon-trash-can text-red-6" tooltip-name="删除" @click="onLayerDelete(item)" />
           </div>
         </div>
       </div>
     </div>
-    <PolygonLink edit />
+    <PolygonLink />
   </div>
 </template>

@@ -1,5 +1,6 @@
 import type { ShallowRef } from 'vue'
 import { fabric } from 'fabric'
+import backgroundAsset from '~/assets/background.jpg'
 // 创建背景网格图案
 function createGridPattern() {
   const patternCanvas = document.createElement('canvas')
@@ -38,8 +39,8 @@ export function updateCanvasSize(wrapWidth: number, wrapHeight: number) {
   })
 
   // 计算缩放比例使画布适应容器
-  const scaleX = (wrapWidth - 100) / 2000
-  const scaleY = (wrapHeight - 100) / 2000
+  const scaleX = (wrapWidth - 100) / WORKSPACE_WIDTH
+  const scaleY = (wrapHeight - 100) / WORKSPACE_HEIGHT
   const scale = Math.min(scaleX, scaleY)
 
   // 设置画布缩放和中心位置
@@ -49,8 +50,8 @@ export function updateCanvasSize(wrapWidth: number, wrapHeight: number) {
     0,
     0,
     scale,
-    (wrapWidth - 2000 * scale) / 2,
-    (wrapHeight - 2000 * scale) / 2,
+    (wrapWidth - WORKSPACE_WIDTH * scale) / 2,
+    (wrapHeight - WORKSPACE_HEIGHT * scale) / 2,
   ])
 
   console.warn('[updateCanvasSize]', scale)
@@ -70,11 +71,21 @@ export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | 
     backgroundColor: '#E5E5E5',
     selection: false,
   })
+  fabric.Object.prototype.set({
+    transparentCorners: false,
+    cornerColor: 'white',
+    cornerStrokeColor: 'white',
+    borderColor: 'white',
+    cornerSize: 10,
+    padding: 10,
+    cornerStyle: 'circle',
+    borderDashArray: [3, 3],
+  })
 
   // 创建中央白色画布
   const centerRect = new fabric.Rect({
-    width: 2000,
-    height: 2000,
+    width: WORKSPACE_WIDTH,
+    height: WORKSPACE_HEIGHT,
     fill: 'white',
     selectable: false,
     hoverCursor: 'default',
@@ -83,6 +94,29 @@ export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | 
 
   // 将白色画布添加到canvas中
   canvas.add(centerRect)
+
+  // 加载背景图片
+  fabric.Image.fromURL(backgroundAsset, async (backgroundImage) => {
+    // new fabric.Image(backgroundAsset, {
+    //   left: centerRect.left,
+    //   top: centerRect.top,
+    //   width: WORKSPACE_WIDTH,
+    //   height: WORKSPACE_HEIGHT,
+    //   selectable: false,
+    //   hoverCursor: 'default',
+    //   name: 'background',
+    // })
+    backgroundImage.set({
+      left: centerRect.left,
+      top: centerRect.top,
+      width: WORKSPACE_WIDTH,
+      height: WORKSPACE_HEIGHT,
+      selectable: false,
+      hoverCursor: 'default',
+      name: 'background',
+    })
+    canvas.add(backgroundImage)
+  })
 
   // 创建网格背景
   const gridPattern = createGridPattern()

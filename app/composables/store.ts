@@ -1,9 +1,5 @@
 import type { PolygonWithText } from './PolygonLink/entity/PolygonWithText'
 
-export const storePageList = useLocalStorage<PageRecord[]>('storePageList', [])
-
-export const storeLayerList = useLocalStorage<PolygonWithTextOptions[]>('storeLayerList', [])
-
 export const globalObjList = ref<ObjUnitRecord[]>([])
 export const globalUnitList = ref<ObjUnitRecord[]>([])
 export const globalPageList = ref<PageRecord[]>([])

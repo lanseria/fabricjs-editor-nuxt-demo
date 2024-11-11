@@ -84,6 +84,8 @@ export default defineNuxtConfig({
         '@arco-design/web-vue/es/modal/style/css.js',
         '@arco-design/web-vue/es/message/style/css.js',
         '@arco-design/web-vue/es',
+        '@arco-design/web-vue/es/radio/index',
+        '@arco-design/web-vue/es/radio/style/css.js',
       ],
     },
   },

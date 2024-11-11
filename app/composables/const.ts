@@ -1,3 +1,5 @@
+export const WORKSPACE_WIDTH = 5840
+export const WORKSPACE_HEIGHT = 3349
 export const DEFAULT_TEXT_COLOR = '#333333'
 export const DEFAULT_TEXT_SIZE = 24
 export const DEFAULT_BG_COLOR = 'rgba(0,0,0,0.1)'
