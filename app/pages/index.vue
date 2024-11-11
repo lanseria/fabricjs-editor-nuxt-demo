@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const selectPageId = ref('')
+const PageFormModalRef = useTemplateRef('PageFormModalRef')
 
 const pageListWithLayer = computed (() => {
   return globalPageList.value.map((item) => {
@@ -9,20 +10,30 @@ const pageListWithLayer = computed (() => {
     }
   })
 })
+
 function onDesignPage(record: PageRecord) {
   navigateTo(`/hi/${record.id}`)
 }
+
+function onPageEdit(record: PageRecord) {
+  PageFormModalRef.value?.open(record)
+}
+
 async function onSelect(record: PageRecord) {
   selectPageId.value = record.id
   const layerList = globalLayerList.value.filter(layer => layer.pageId === record.id)
   layerList.forEach((item) => {
-    onPolygonInitAdd(item)
+    onPolygonInitAdd(item, false)
   })
 }
 onMounted(() => {
   console.warn('[index.vue]:', 'onMounted')
+  fetchPageList()
+  fetchLayerList()
 })
 onUnmounted(() => {
+  globalLayerList.value = []
+  globalPageList.value = []
   console.warn('[index.vue]:', 'onUnmounted')
 })
 </script>
@@ -47,11 +58,12 @@ onUnmounted(() => {
           <div>{{ item.name }}<span>({{ item.layerList.length }})</span></div>
           <div class="flex">
             <ToolBtn icon-name="i-carbon-area-custom" tooltip-name="设计" @click.stop="onDesignPage(item)" />
-            <ToolBtn icon-name="i-carbon-edit" tooltip-name="编辑" @click.stop />
+            <ToolBtn icon-name="i-carbon-edit" tooltip-name="编辑" @click.stop="onPageEdit(item)" />
             <ToolBtn icon-name="i-carbon-trash-can" tooltip-name="删除" @click.stop="onPageDelete(item)" />
           </div>
         </div>
       </div>
+      <PageFormModal ref="PageFormModalRef" />
     </div>
     <PolygonLink />
   </div>

@@ -15,8 +15,8 @@ export async function fetchLayerList() {
   globalLayerList.value = data
 }
 export function queryAllData() {
-  fetchObjList()
-  fetchUnitList()
-  fetchPageList()
-  fetchLayerList()
+  // fetchObjList()
+  // fetchUnitList()
+  // fetchPageList()
+  // fetchLayerList()
 }

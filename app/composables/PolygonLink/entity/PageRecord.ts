@@ -29,15 +29,15 @@ export async function onLayerAdd(options: PolygonWithTextOptions) {
     Message.warning('请先选择页面ID')
     return
   }
-  const currentLayerList = globalLayerList.value.filter(i => i.pageId === currentPageId.value)
-  if (currentLayerList.find(i => i.name === options.name)) {
+  if (globalLayerList.value.find(i => i.name === options.name)) {
     // 更新
-    const idx = currentLayerList.findIndex(i => i.name === options.name)
+    console.warn('[onLayerAdd]:', '更新', options.name)
+    const idx = globalLayerList.value.findIndex(i => i.name === options.name)
     globalLayerList.value[idx] = { ...options }
   }
   else {
     // 新增
+    console.warn('[onLayerAdd]:', '新增', options.name)
     globalLayerList.value.push(options)
   }
-  triggerRef(storePageList)
 }

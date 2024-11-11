@@ -12,7 +12,7 @@ export const globalLayerList = ref<PolygonWithTextOptions[]>([])
 export const currentPageId = ref('')
 
 export const canvasIsReady = ref(false)
-export const canvasFabric = shallowRef<fabric.Canvas | fabric.StaticCanvas>()
+export const canvasFabric = shallowRef<fabric.Canvas>()
 watchEffect(() => {
   console.warn('[store.ts]:', 'canvasFabric', canvasFabric.value)
   const objectList = canvasFabric.value?.getObjects()

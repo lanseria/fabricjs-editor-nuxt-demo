@@ -7,7 +7,7 @@ export class PolygonWithText {
   private group: fabric.Group
   public options: PolygonWithTextOptions
 
-  constructor(canvas: fabric.Canvas | fabric.StaticCanvas, options: PolygonWithTextOptions) {
+  constructor(canvas: fabric.Canvas | fabric.StaticCanvas, options: PolygonWithTextOptions, selectable = true) {
     this.canvas = canvas
     this.options = options
 
@@ -32,7 +32,7 @@ export class PolygonWithText {
 
     // 将多边形和文本组合成组
     this.group = new fabric.Group([this.polygon, this.text], {
-      selectable: true,
+      selectable,
       hasControls: true,
       name: options.name,
       left: options.left,
@@ -136,6 +136,7 @@ export class PolygonWithText {
   // 删除自己
   public remove() {
     this.canvas.remove(this.group)
+    this.canvas.renderAll()
     triggerRef(canvasFabric)
   }
 }

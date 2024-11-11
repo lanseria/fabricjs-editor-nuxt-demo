@@ -23,34 +23,38 @@ export async function responseInterceptor(response: AxiosResponse<any, any>) {
 
 request.interceptors.response.use(responseInterceptor)
 
-export function queryObjList(): Promise<any> {
+export function queryObjList(): Promise<R<any>> {
   return request.get('/obj/list')
 }
 
-export function queryUnitList(): Promise<any> {
+export function queryUnitList(): Promise<R<any>> {
   return request.get('/unit/list')
 }
 
-export function queryPageList(): Promise<any> {
+export function queryPageList(): Promise<R<any>> {
   return request.get('/page/list')
 }
 
-export function postPage(data: PageRecord): Promise<boolean> {
+export function postPage(data: PageRecord): Promise<R<boolean>> {
   return request.post('/page', data)
 }
 
-export function deletePage(id: string): Promise<boolean> {
+export function putPage(data: PageRecord): Promise<R<boolean>> {
+  return request.put('/page', data)
+}
+
+export function deletePage(id: string): Promise<R<boolean>> {
   return request.delete(`/page/${id}`)
 }
 
-export function queryLayerList(): Promise<any> {
+export function queryLayerList(): Promise<R<any>> {
   return request.get('/layer/list')
 }
 
-export function postPageLayerList(data: PostPageLayerList): Promise<boolean> {
+export function postPageLayerList(data: PostPageLayerList): Promise<R<boolean>> {
   return request.post('/layer', data)
 }
 
-export function deleteLayer(id: string): Promise<boolean> {
+export function deleteLayer(id: string): Promise<R<boolean>> {
   return request.delete(`/layer/${id}`)
 }

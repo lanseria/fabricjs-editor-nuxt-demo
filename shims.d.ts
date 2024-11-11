@@ -14,6 +14,12 @@ declare global {
   }
 }
 
+interface R<T> {
+  code: number
+  data: T
+  msg: string
+}
+
 interface PolygonDrawnEvent {
   polygon: fabric.Polygon
 }

@@ -30,6 +30,8 @@ function open(polygonWithTextName: string) {
   console.warn('[BindRiskAnalysisObjectModal.vue]:', 'polygon:created', polygonWithTextName)
   currentPolygonWithTextName.value = polygonWithTextName
   ModalVisible.value = true
+  fetchObjList()
+  fetchUnitList()
 }
 
 function edit({ id, name }: { id: string, name: string }) {
@@ -37,6 +39,8 @@ function edit({ id, name }: { id: string, name: string }) {
   currentPolygonWithTextName.value = name
   selectedKeys.value = [id]
   ModalVisible.value = true
+  fetchObjList()
+  fetchUnitList()
 }
 function onSelect(rowKeys: (string | number)[]) {
   const val = rowKeys as string[]

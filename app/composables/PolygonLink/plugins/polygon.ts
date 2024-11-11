@@ -197,13 +197,13 @@ function onDoubleClick(_event: fabric.IEvent) {
   stopPolygonDrawing()
 }
 
-export function onPolygonInitAdd(options: PolygonWithTextOptions) {
+export function onPolygonInitAdd(options: PolygonWithTextOptions, selectable = true) {
   if (canvasFabric.value === undefined) {
     console.error('请先初始化画布')
     return
   }
   const canvas = canvasFabric.value
-  const polygonWithText = new PolygonWithText(canvas, options)
+  const polygonWithText = new PolygonWithText(canvas, options, selectable)
   polygonWithTextList.value.push(polygonWithText)
 }
 

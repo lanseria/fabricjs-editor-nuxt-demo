@@ -58,24 +58,18 @@ export function updateCanvasSize(wrapWidth: number, wrapHeight: number) {
   console.warn('[updateCanvasSize]', wrapHeight)
 }
 // 初始化画布
-export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | null>, wrapRef: ShallowRef<HTMLDivElement | null>, edit: boolean) {
+export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | null>, wrapRef: ShallowRef<HTMLDivElement | null>) {
   // 创建fabric画布
   if (!wrapRef.value)
     return
   const wrapWidth = wrapRef.value.clientWidth
   const wrapHeight = wrapRef.value.clientHeight
-  const canvas = edit
-    ? new fabric.Canvas(canvasRef.value, {
-      width: wrapWidth,
-      height: wrapHeight,
-      backgroundColor: '#E5E5E5',
-      selection: false,
-    })
-    : new fabric.StaticCanvas(canvasRef.value, {
-      width: wrapWidth,
-      height: wrapHeight,
-      backgroundColor: '#E5E5E5',
-    })
+  const canvas = new fabric.Canvas(canvasRef.value, {
+    width: wrapWidth,
+    height: wrapHeight,
+    backgroundColor: '#E5E5E5',
+    selection: false,
+  })
 
   // 创建中央白色画布
   const centerRect = new fabric.Rect({

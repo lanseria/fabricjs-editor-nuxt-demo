@@ -5,15 +5,18 @@ const route = useRoute<'hi-id'>()
 const router = useRouter()
 const id = computed(() => route.params.id)
 const pageName = computed(() => {
-  const item = storePageList.value.find(i => i.id === id.value)
+  const item = globalPageList.value.find(i => i.id === id.value)
   if (item)
     return item.name
   else
     return ''
 })
+const currentPageLayerList = computed(() => {
+  return globalLayerList.value.filter(item => item.pageId === id.value)
+})
 function onLayerDelete(record: PolygonWithTextOptions) {
   onPolygonDelete(record.name)
-  globalLayerList.value = storeLayerList.value.filter(item => item.name !== record.name)
+  globalLayerList.value = globalLayerList.value.filter(item => item.name !== record.name)
 }
 function onLayerEdit(record: PolygonWithTextOptions) {
   currentPageId.value = record.pageId
@@ -22,7 +25,7 @@ function onLayerEdit(record: PolygonWithTextOptions) {
 async function onPageLayerSave() {
   const formData: PostPageLayerList = {
     pageId: id.value,
-    children: globalLayerList.value,
+    children: currentPageLayerList.value,
   }
   await postPageLayerList(formData)
   await fetchLayerList()
@@ -49,12 +52,14 @@ onMounted(async () => {
   await until(canvasIsReady).toBe(true)
   await until(canvasFabric).not.toBe(undefined)
   console.warn('[id.vue]:', 'onPolygonInitAdd')
-  globalLayerList.value.forEach((item) => {
+  await fetchLayerList()
+  currentPageLayerList.value.forEach((item) => {
     onPolygonInitAdd(item)
   })
 })
 
 onUnmounted(() => {
+  globalLayerList.value = []
   console.warn('[id.vue]:', 'onUnmounted')
 })
 </script>
@@ -76,7 +81,7 @@ onUnmounted(() => {
         <ToolBtn icon-name="i-carbon-save" tooltip-name="报错" @click="onPageLayerSave()" />
       </div>
       <div class="flex flex-col">
-        <div v-for="item in globalLayerList" :key="item.name" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">
+        <div v-for="item in currentPageLayerList" :key="item.name" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">
           <div class="flex flex-col items-start gap-1">
             <div>
               {{ item.text }}
