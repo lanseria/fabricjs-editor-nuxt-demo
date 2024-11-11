@@ -116,6 +116,11 @@ export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | 
       name: 'background',
     })
     canvas.add(backgroundImage)
+    // 先放置在最底层
+    canvas.sendToBack(backgroundImage)
+    // 再向上移动一层
+    canvas.bringForward(backgroundImage, false)
+    canvas.renderAll()
   })
 
   // 创建网格背景

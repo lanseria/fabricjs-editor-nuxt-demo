@@ -33,6 +33,7 @@ onMounted(async () => {
   await fetchLayerList()
   await fetchPageList()
   if (globalPageList.value.length > 0) {
+    // console.log('globalPageList.value[0]', globalPageList.value[0])
     onSelect(globalPageList.value[0]!)
   }
 })

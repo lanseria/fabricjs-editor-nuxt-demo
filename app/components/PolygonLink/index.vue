@@ -19,7 +19,7 @@ const debouncedOnResize = useDebounceFn(onResize, 300)
 onMounted(async () => {
   await until(canvasFabric).toBe(undefined)
   console.warn('[PolygonLink.vue]:', 'onMounted')
-  initCanvasBasicPlugin(canvasRef, wrapRef)
+  await initCanvasBasicPlugin(canvasRef, wrapRef)
   canvasIsReady.value = true
   // 添加滚轮缩放事件
   onWheelPlugin()
