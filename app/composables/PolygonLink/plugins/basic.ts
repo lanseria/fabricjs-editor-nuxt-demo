@@ -5,20 +5,20 @@ import backgroundAsset from '~/assets/background.jpg'
 function createGridPattern() {
   const patternCanvas = document.createElement('canvas')
   const patternContext = patternCanvas.getContext('2d')
+  const patternSize = 100
+  const gridSize = 50 // 每个格子的大小
 
-  patternCanvas.width = 20
-  patternCanvas.height = 20
+  patternCanvas.width = patternSize
+  patternCanvas.height = patternSize
+
   if (patternContext) {
-    patternContext.strokeStyle = '#CCCCCC'
-    patternContext.lineWidth = 1
-
-    // 绘制网格
-    patternContext.beginPath()
-    patternContext.moveTo(0, 0)
-    patternContext.lineTo(20, 0)
-    patternContext.moveTo(0, 0)
-    patternContext.lineTo(0, 20)
-    patternContext.stroke()
+    // 绘制棋盘格
+    for (let x = 0; x < patternSize; x += gridSize) {
+      for (let y = 0; y < patternSize; y += gridSize) {
+        patternContext.fillStyle = (x + y) % (gridSize * 2) === 0 ? '#FFFFFF' : '#D3D3D3'
+        patternContext.fillRect(x, y, gridSize, gridSize)
+      }
+    }
   }
 
   return patternCanvas

@@ -5,16 +5,24 @@ let lastPosX = 0
 let lastPosY = 0
 let watchEffectOfSpace: WatchHandle | null = null
 
+function isBreak(canvas: fabric.Canvas | undefined) {
+  if (!canvas && !isSpacePressed) {
+    return true
+  }
+  else {
+    return false
+  }
+}
+
 // 添加鼠标按下事件
 function onMouseDown(opt: fabric.IEvent<MouseEvent>) {
   const canvas = canvasFabric.value!
   if (isDrawingMode.value) {
     return
   }
-  if (!isSpacePressed && !canvas)
+  if (isBreak(canvas))
     return
-  console.warn('[onMouseDown]')
-  if (isSpacePressed!.value) {
+  if (isSpacePressed!.value || isPanMode.value) {
     isPanning.value = true
     canvas.selection = false
     lastPosX = opt.e.clientX
@@ -29,10 +37,9 @@ function onMouseMove(opt: fabric.IEvent<MouseEvent>) {
   if (isDrawingMode.value) {
     return
   }
-  if (!isSpacePressed && !canvas)
+  if (isBreak(canvas))
     return
   if (isPanning.value) {
-    console.warn('[onMouseMove]')
     const vpt = canvas.viewportTransform!
     vpt[4]! += opt.e.clientX - lastPosX
     vpt[5]! += opt.e.clientY - lastPosY
@@ -44,6 +51,9 @@ function onMouseMove(opt: fabric.IEvent<MouseEvent>) {
     if (isSpacePressed?.value) {
       canvas.setCursor('grab')
     }
+    if (isPanMode.value) {
+      canvas.setCursor('grab')
+    }
   }
 }
 
@@ -53,9 +63,8 @@ function onMouseUp() {
   if (isDrawingMode.value) {
     return
   }
-  if (!isSpacePressed && !canvas)
+  if (isBreak(canvas))
     return
-  console.warn('[onMouseUp]')
   isPanning.value = false
   canvas.selection = true
   // Only reset cursor to 'grab' or 'default' after releasing the mouse

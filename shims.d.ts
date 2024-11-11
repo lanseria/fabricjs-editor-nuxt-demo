@@ -61,4 +61,4 @@ interface ObjUnitRecord {
   level: string
 }
 
-type ToolActive = 'select' | 'polygon'
+type ToolActive = 'select' | 'polygon' | 'pan'

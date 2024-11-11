@@ -27,9 +27,15 @@ export const isPanning = ref(false)
 export const { space: isSpacePressed, escape: isEscPressed } = useMagicKeys()
 
 export const toolActive = ref<ToolActive>('select')
+
 export const isSelectMode = computed(() => {
   return toolActive.value === 'select'
 })
+
 export const isDrawingMode = computed(() => {
   return toolActive.value === 'polygon'
+})
+
+export const isPanMode = computed(() => {
+  return toolActive.value === 'pan'
 })

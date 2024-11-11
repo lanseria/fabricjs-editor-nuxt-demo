@@ -6,11 +6,14 @@ const showBack = computed(() => route.path !== '/')
 
 <template>
   <main class="h-screen w-screen flex flex-col">
-    <div class="flex items-center justify-start gap-2 border-b-1px border-gray-1 p-2">
-      <ToolBtn v-if="showBack" icon-name="i-carbon-arrow-left" tooltip-name="返回" @click="$router.back()" />
-      <div class="text-20px">
-        风险四色图
+    <div class="flex items-center justify-between gap-2 border-b-1px border-gray-1 p-2">
+      <div class="flex items-center justify-start gap-2">
+        <ToolBtn v-if="showBack" icon-name="i-carbon-arrow-left" tooltip-name="返回" @click="$router.back()" />
+        <div class="text-20px">
+          风险四色图
+        </div>
       </div>
+      <HelpBtn />
     </div>
     <div class="flex flex-1">
       <slot />
