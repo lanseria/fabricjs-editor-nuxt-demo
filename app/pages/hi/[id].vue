@@ -70,6 +70,7 @@ onUnmounted(() => {
       <div class="flex flex-col items-center">
         <ToolBtn icon-name="i-carbon-cursor-1" tooltip-name="移动" :active="isSelectMode" @click="setToolActive('select')" />
         <ToolBtn icon-name="i-carbon-area-custom" tooltip-name="多边形" :active="isDrawingMode" @click="toggleDrawMode()" />
+        <BackgroundBtn />
         <PolygonLinkBindRiskAnalysisObjectModal />
       </div>
       <div class="flex flex-col items-center">
@@ -85,6 +86,12 @@ onUnmounted(() => {
                 <div class="flex items-center justify-between gap-2">
                   <ToolBtn icon-name="i-carbon-cursor-1 text-blue-6" tooltip-name="移动对象" />
                   <div>移动对象</div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between gap-2">
+                  <ToolBtn icon-name="i-carbon-image text-blue-6" tooltip-name="设置背景图" />
+                  <div>设置背景图</div>
                 </div>
               </div>
               <div class="flex flex-col gap-2">
