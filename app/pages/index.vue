@@ -45,7 +45,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-full flex flex-1">
+  <div class="h-full flex shrink grow basis-0 overflow-hidden">
     <div class="w-300px flex-none border-r-1px border-gray-1">
       <div class="flex items-center justify-between border-b-1px border-gray-1 px-2 py-1">
         <div class="text-14px font-bold">
