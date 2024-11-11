@@ -115,8 +115,8 @@ function onMouseDown(event: fabric.IEvent) {
     const p2 = points[points.length - 1]
 
     const line = new fabric.Line([p1!.x, p1!.y, p2!.x, p2!.y], {
-      stroke: '#999999',
-      strokeWidth: 2,
+      stroke: '#43CF7C',
+      strokeWidth: 6,
       selectable: false,
       evented: false,
     })
@@ -143,9 +143,9 @@ function onMouseMove(event: fabric.IEvent) {
   // Create temporary polygon
   const tempPoints = [...points, new fabric.Point(pointer.x, pointer.y)]
   activePolygon = new fabric.Polygon(tempPoints, {
-    fill: 'rgba(0,0,0,0.1)',
-    stroke: '#999999',
-    strokeWidth: 2,
+    fill: '#43CF7C4C',
+    stroke: '#43CF7C',
+    strokeWidth: 6,
     selectable: false,
     evented: false,
   })
