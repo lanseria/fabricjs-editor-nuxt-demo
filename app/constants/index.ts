@@ -1,2 +1,2 @@
-export const appName = 'fabricjs-editor-nuxt-demo'
-export const appDescription = 'fabricjs-editor-nuxt-demo'
+export const appName = '波士特-四色图编辑器'
+export const appDescription = '波士特-四色图编辑器'
