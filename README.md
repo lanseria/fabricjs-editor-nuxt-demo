@@ -20,4 +20,5 @@ https://js.design/f/FYeggV?p=5ywOngl0pw&mode=design&linkelement=3-16
 rsync -av --delete dist/ root@119.3.111.163:/root/bst/design/
 ssh root@119.3.111.163
 docker cp /root/bst/design/. safety-php:/var/www/bstriskpic/
+exit
 ```
