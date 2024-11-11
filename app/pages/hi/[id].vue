@@ -2,6 +2,7 @@
 import { canvasIsReady } from '~/composables/store'
 
 const route = useRoute<'hi-id'>()
+const router = useRouter()
 const id = computed(() => route.params.id)
 const pageName = computed(() => {
   const item = storePageList.value.find(i => i.id === id.value)
@@ -12,11 +13,20 @@ const pageName = computed(() => {
 })
 function onLayerDelete(record: PolygonWithTextOptions) {
   onPolygonDelete(record.name)
-  storeLayerList.value = storeLayerList.value.filter(item => item.name !== record.name)
+  globalLayerList.value = storeLayerList.value.filter(item => item.name !== record.name)
 }
 function onLayerEdit(record: PolygonWithTextOptions) {
   currentPageId.value = record.pageId
   emitter.emit('polygon:updated', { name: record.name, id: record.riskAnalysisObjectId })
+}
+async function onPageLayerSave() {
+  const formData: PostPageLayerList = {
+    pageId: id.value,
+    children: globalLayerList.value,
+  }
+  await postPageLayerList(formData)
+  await fetchLayerList()
+  router.back()
 }
 function toggleDrawMode() {
   if (!id.value) {
@@ -63,6 +73,7 @@ onUnmounted(() => {
         <div>
           图层
         </div>
+        <ToolBtn icon-name="i-carbon-save" tooltip-name="报错" @click="onPageLayerSave()" />
       </div>
       <div class="flex flex-col">
         <div v-for="item in globalLayerList" :key="item.name" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">

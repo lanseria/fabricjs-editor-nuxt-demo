@@ -16,6 +16,7 @@ export async function onPageAdd() {
   await postPage(initPageRecord())
   await fetchPageList()
 }
+
 export async function onPageDelete(item: PageRecord) {
   await deletePage(item.id)
   await fetchPageList()
@@ -31,14 +32,12 @@ export async function onLayerAdd(options: PolygonWithTextOptions) {
   const currentLayerList = globalLayerList.value.filter(i => i.pageId === currentPageId.value)
   if (currentLayerList.find(i => i.name === options.name)) {
     // 更新
-    // const idx = currentLayerList.findIndex(i => i.name === options.name)
-    await putLayer(options)
-    // storeLayerList.value[idx] = { ...options }
+    const idx = currentLayerList.findIndex(i => i.name === options.name)
+    globalLayerList.value[idx] = { ...options }
   }
   else {
     // 新增
-    await postLayer(options)
-    // storeLayerList.value.push(options)
+    globalLayerList.value.push(options)
   }
   triggerRef(storePageList)
 }

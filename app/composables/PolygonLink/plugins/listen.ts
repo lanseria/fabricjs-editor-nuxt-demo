@@ -12,8 +12,8 @@ export function onObjectChange() {
       return
     }
     // 修改后重新绘制
-    await putLayer(modifiedObj.options)
-    // storeLayerList.value[index] = { ...storeLayerList.value[index], ...modifiedObj.options }
+    // await putLayer(modifiedObj.options)
+    globalLayerList.value[index] = { ...storeLayerList.value[index], ...modifiedObj.options }
   })
 }
 

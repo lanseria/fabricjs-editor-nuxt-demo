@@ -19,6 +19,7 @@ interface PolygonDrawnEvent {
 }
 
 interface PolygonWithTextOptions {
+  // id: string
   left: number
   top: number
   width: number
@@ -36,6 +37,11 @@ interface PolygonWithTextOptions {
   riskAnalysisObjectLevel?: string
   // pageId
   pageId: string
+}
+
+interface PostPageLayerList {
+  pageId: string
+  children: PolygonWithTextOptions[]
 }
 
 interface PageRecord {
