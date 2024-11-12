@@ -9,17 +9,9 @@ export function initPageRecord(): PageRecord {
   return {
     id,
     name: `页面_${id}`,
+    children: [],
+    backgroundImageUrl: null,
   }
-}
-
-export async function onPageAdd() {
-  await postPage(initPageRecord())
-  await fetchPageList()
-}
-
-export async function onPageDelete(item: PageRecord) {
-  await deletePage(item.id)
-  await fetchPageList()
 }
 
 export async function onLayerAdd(options: PolygonWithTextOptions) {

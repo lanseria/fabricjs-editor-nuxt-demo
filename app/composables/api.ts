@@ -31,8 +31,12 @@ export function queryUnitList(): Promise<R<any>> {
   return request.get('/unit/list')
 }
 
-export function queryPageList(): Promise<R<any>> {
+export function queryPageList(): Promise<R<PageRecord[]>> {
   return request.get('/page/list')
+}
+
+export function queryPageById(id: string): Promise<R<PageRecord>> {
+  return request.get(`/page/${id}`)
 }
 
 export function postPage(data: PageRecord): Promise<R<boolean>> {
@@ -51,10 +55,10 @@ export function queryLayerList(): Promise<R<any>> {
   return request.get('/layer/list')
 }
 
-export function postPageLayerList(data: PostPageLayerList): Promise<R<boolean>> {
-  return request.post('/layer', data)
-}
-
 export function deleteLayer(id: string): Promise<R<boolean>> {
   return request.delete(`/layer/${id}`)
+}
+
+export function uploadImage(data: FormData): Promise<R<string>> {
+  return request.post(`/upload`, data)
 }

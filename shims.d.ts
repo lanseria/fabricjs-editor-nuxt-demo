@@ -45,14 +45,12 @@ interface PolygonWithTextOptions {
   pageId: string
 }
 
-interface PostPageLayerList {
-  pageId: string
-  children: PolygonWithTextOptions[]
-}
-
 interface PageRecord {
   id: string
   name: string
+  backgroundImageUrl: string | null
+  // useOriginalImage: boolean
+  children: PolygonWithTextOptions[]
 }
 
 interface ObjUnitRecord {

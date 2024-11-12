@@ -4,31 +4,42 @@ import { canvasIsReady } from '~/composables/store'
 const route = useRoute<'hi-id'>()
 const router = useRouter()
 const id = computed(() => route.params.id)
-const pageName = computed(() => {
-  const item = globalPageList.value.find(i => i.id === id.value)
-  if (item)
-    return item.name
-  else
-    return ''
-})
-const currentPageLayerList = computed(() => {
-  return globalLayerList.value.filter(item => item.pageId === id.value)
-})
+
 function onLayerDelete(record: PolygonWithTextOptions) {
+  if (globalPageDetail.value === null) {
+    console.error('globalPageDetail.value is null')
+    return
+  }
   onPolygonDelete(record.name)
-  globalLayerList.value = globalLayerList.value.filter(item => item.name !== record.name)
+  globalPageDetail.value!.children = globalLayerList.value.filter(item => item.name !== record.name)
 }
 function onLayerEdit(record: PolygonWithTextOptions) {
   currentPageId.value = record.pageId
   emitter.emit('polygon:updated', { name: record.name, id: record.riskAnalysisObjectId })
 }
 async function onPageLayerSave() {
-  const formData: PostPageLayerList = {
-    pageId: id.value,
-    children: currentPageLayerList.value,
+  let backgroundImageUrl = null
+  if (backgroundImageBlobUrl.value) {
+    const uploadFileFormData = new FormData()
+    const file = await blobUrlToFile(backgroundImageBlobUrl.value)
+    uploadFileFormData.append('file', file)
+    const { code, data, msg } = await uploadImage(uploadFileFormData)
+    if (code) {
+      Message.warning(msg)
+      return
+    }
+    else {
+      backgroundImageUrl = data
+    }
   }
-  await postPageLayerList(formData)
-  await fetchLayerList()
+  const formData: PageRecord = {
+    id: id.value,
+    name: globalPageDetail.value!.name,
+    backgroundImageUrl,
+    children: globalLayerList.value,
+  }
+  await putPage(formData)
+  await fetchPageDetail(id.value)
   router.back()
 }
 function toggleDrawMode() {
@@ -52,14 +63,22 @@ onMounted(async () => {
   await until(canvasIsReady).toBe(true)
   await until(canvasFabric).not.toBe(undefined)
   console.warn('[id.vue]:', 'onPolygonInitAdd')
-  await fetchLayerList()
-  currentPageLayerList.value.forEach((item) => {
+  await fetchPageDetail(id.value)
+  if (globalPageDetail.value === null) {
+    return
+  }
+  if (globalPageDetail.value!.backgroundImageUrl) {
+    const blobUrl = await urlToBlobUrl(globalPageDetail.value!.backgroundImageUrl!)
+    setBackgroundImageBlobUrl(blobUrl)
+    setBackgroundImage()
+  }
+  globalLayerList.value.forEach((item) => {
     onPolygonInitAdd(item)
   })
 })
 
 onUnmounted(() => {
-  globalLayerList.value = []
+  globalPageDetail.value = null
   console.warn('[id.vue]:', 'onUnmounted')
 })
 </script>
@@ -80,7 +99,7 @@ onUnmounted(() => {
       <div class="flex items-center justify-between gap-2 border-b-1px border-gray-1 px-4 py-2">
         <div class="flex items-center">
           <div class="text-14px font-bold">
-            {{ pageName }}
+            {{ globalPageDetail?.name }}
           </div>
           <div>
             图层
@@ -89,8 +108,8 @@ onUnmounted(() => {
         <ToolBtn icon-name="i-carbon-save text-blue-6" tooltip-name="保存" @click="onPageLayerSave()" />
       </div>
       <div class="flex flex-col">
-        <AEmpty v-if="currentPageLayerList.length === 0" />
-        <div v-for="item in currentPageLayerList" :key="item.name" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">
+        <AEmpty v-if="globalLayerList.length === 0" />
+        <div v-for="item in globalLayerList" :key="item.name" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">
           <div class="flex flex-col items-start gap-1">
             <div>
               {{ item.text }}

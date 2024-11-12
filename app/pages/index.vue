@@ -1,28 +1,39 @@
 <script setup lang="ts">
+import { globalPageList } from '#imports'
+
 const selectPageId = ref('')
 const PageFormModalRef = useTemplateRef('PageFormModalRef')
-
-const pageListWithLayer = computed (() => {
-  return globalPageList.value.map((item) => {
-    return {
-      ...item,
-      layerList: globalLayerList.value.filter(layer => layer.pageId === item.id),
-    }
-  })
-})
 
 function onDesignPage(record: PageRecord) {
   navigateTo(`/hi/${record.id}`)
 }
 
+async function onPageAdd() {
+  await postPage(initPageRecord())
+  await fetchPageList()
+}
+
+async function onPageDelete(item: PageRecord) {
+  if (item.id === selectPageId.value) {
+    initBackgroundImageBlobUrl()
+    setBackgroundImage()
+    onPolygonClear()
+  }
+  await deletePage(item.id)
+  await fetchPageList()
+}
 function onPageEdit(record: PageRecord) {
   PageFormModalRef.value?.open(record)
 }
 
 async function onSelect(record: PageRecord) {
   selectPageId.value = record.id
-  const layerList = globalLayerList.value.filter(layer => layer.pageId === record.id)
-  layerList.forEach((item) => {
+  if (record.backgroundImageUrl) {
+    const blobUrl = await urlToBlobUrl(record.backgroundImageUrl)
+    setBackgroundImageBlobUrl(blobUrl)
+    setBackgroundImage()
+  }
+  record.children.forEach((item) => {
     onPolygonInitAdd(item, false)
   })
 }
@@ -30,16 +41,12 @@ onMounted(async () => {
   console.warn('[index.vue]:', 'onMounted')
   await until(canvasIsReady).toBe(true)
   await until(canvasFabric).not.toBe(undefined)
-  await fetchLayerList()
   await fetchPageList()
   if (globalPageList.value.length > 0) {
-    // console.log('globalPageList.value[0]', globalPageList.value[0])
     onSelect(globalPageList.value[0]!)
   }
 })
 onUnmounted(() => {
-  globalLayerList.value = []
-  globalPageList.value = []
   console.warn('[index.vue]:', 'onUnmounted')
 })
 </script>
@@ -54,9 +61,9 @@ onUnmounted(() => {
         <ToolBtn icon-name="i-carbon-add" tooltip-name="添加页面" @click="onPageAdd()" />
       </div>
       <div class="flex flex-col">
-        <AEmpty v-if="pageListWithLayer.length === 0" />
+        <AEmpty v-if="globalPageList.length === 0" />
         <div
-          v-for="item in pageListWithLayer"
+          v-for="item in globalPageList"
           :key="item.id"
           class="flex items-center justify-between px-2 py-1 hover:bg-gray-50"
           @click="onSelect(item)"
@@ -64,7 +71,7 @@ onUnmounted(() => {
           <div
             :class="{ 'text-blue-5 font-bold': item.id === selectPageId }"
           >
-            {{ item.name }}<span>({{ item.layerList.length }})</span>
+            {{ item.name }}<span>({{ item.children.length }})</span>
           </div>
           <div class="flex">
             <ToolBtn icon-name="i-carbon-area-custom text-orange-6" tooltip-name="设计" @click.stop="onDesignPage(item)" />

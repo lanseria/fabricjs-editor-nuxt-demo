@@ -10,9 +10,9 @@ export async function fetchPageList() {
   const { data } = await queryPageList()
   globalPageList.value = data
 }
-export async function fetchLayerList() {
-  const { data } = await queryLayerList()
-  globalLayerList.value = data
+export async function fetchPageDetail(id: string) {
+  const { data } = await queryPageById(id)
+  globalPageDetail.value = data
 }
 export function queryAllData() {
   // fetchObjList()
@@ -33,4 +33,12 @@ export function setToolActive(tool: ToolActive) {
       item.setMoveable(false)
     })
   }
+}
+
+export function setBackgroundImageBlobUrl(url: string) {
+  backgroundImageBlobUrl.value = url
+}
+
+export function initBackgroundImageBlobUrl() {
+  backgroundImageBlobUrl.value = ''
 }

@@ -206,6 +206,15 @@ function onDoubleClick(_event: fabric.IEvent) {
   stopPolygonDrawing()
 }
 
+export function onPolygonClear() {
+  if (polygonWithTextList.value.length > 0) {
+    polygonWithTextList.value.forEach((item) => {
+      item.remove()
+    })
+    polygonWithTextList.value = []
+  }
+}
+
 export function onPolygonInitAdd(options: PolygonWithTextOptions, selectable = true) {
   if (canvasFabric.value === undefined) {
     console.error('请先初始化画布')

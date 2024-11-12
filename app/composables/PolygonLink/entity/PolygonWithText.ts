@@ -79,7 +79,6 @@ export class PolygonWithText {
 
   // 同步位置到 options
   private syncPositionToOptions() {
-    console.warn('[syncPositionToOptions]:', this.group.name, this.group.left)
     if (this.group) {
       this.options.left = this.group.left ?? 0
       this.options.top = this.group.top ?? 0

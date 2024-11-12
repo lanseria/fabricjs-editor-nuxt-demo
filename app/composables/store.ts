@@ -3,7 +3,14 @@ import type { PolygonWithText } from './PolygonLink/entity/PolygonWithText'
 export const globalObjList = ref<ObjUnitRecord[]>([])
 export const globalUnitList = ref<ObjUnitRecord[]>([])
 export const globalPageList = ref<PageRecord[]>([])
-export const globalLayerList = ref<PolygonWithTextOptions[]>([])
+export const globalPageDetail = ref<PageRecord | null>(null)
+
+export const globalLayerList = computed(() => {
+  if (globalPageDetail.value)
+    return globalPageDetail.value.children
+  else
+    return []
+})
 
 export const currentPageId = ref('')
 
@@ -39,3 +46,8 @@ export const isDrawingMode = computed(() => {
 export const isPanMode = computed(() => {
   return toolActive.value === 'pan'
 })
+
+export const workspaceSize = ref({ width: WORKSPACE_WIDTH, height: WORKSPACE_HEIGHT })
+export const wrapSize = ref({ width: 0, height: 0 })
+
+export const backgroundImageBlobUrl = ref<string>('')

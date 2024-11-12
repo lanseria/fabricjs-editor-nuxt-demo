@@ -1,9 +1,12 @@
 export const WORKSPACE_WIDTH = 5840
 export const WORKSPACE_HEIGHT = 3349
 export const DEFAULT_TEXT_COLOR = '#333333'
-export const DEFAULT_TEXT_SIZE = 48
+export const DEFAULT_TEXT_SIZE = 36
 export const DEFAULT_BG_COLOR = 'rgba(0,0,0,0.1)'
 export const DEFAULT_STROKE_COLOR = '#000'
+
+export const WORKSPACE_NAME = 'workspace'
+export const BACKGROUND_NAME = 'background'
 
 export const riskLevelList = [
   {
