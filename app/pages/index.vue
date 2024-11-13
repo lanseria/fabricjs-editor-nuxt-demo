@@ -35,8 +35,11 @@ async function onSelect(record: PageRecord) {
   if (record.backgroundImageUrl) {
     const blobUrl = await urlToBlobUrl(record.backgroundImageUrl)
     setBackgroundImageBlobUrl(blobUrl)
-    setBackgroundImage()
   }
+  else {
+    initBackgroundImageBlobUrl()
+  }
+  setBackgroundImage()
   onPolygonClear()
   record.children.forEach((item) => {
     onPolygonInitAdd(item, false)
