@@ -13,6 +13,7 @@ export const globalLayerList = computed(() => {
 })
 
 export const currentPageId = ref('')
+export const polygonWithTextList = shallowRef<PolygonWithText[]>([])
 
 export const canvasIsReady = ref(false)
 export const canvasFabric = shallowRef<fabric.Canvas>()
@@ -22,13 +23,17 @@ watchEffect(() => {
   if (objectList?.length !== 0) {
     const objectNameList = objectList?.map(item => item.name)
     console.warn('[store.ts]:', 'canvasFabric objectList', objectNameList)
+    // 更新对象列表
+    // if (globalPageDetail.value) {
+    //   console.warn('[store.ts]:', '更新globalPageDetail.children对象列表', globalPageDetail.value.children.length)
+    //   globalPageDetail.value.children = polygonWithTextList.value.map(item => item.options)
+    // }
   }
 })
 export const canvasFabricSelectableObjectList = computed(() => {
   const objectList = canvasFabric.value?.getObjects()
   return objectList?.filter(item => item.selectable)
 })
-export const polygonWithTextList = shallowRef<PolygonWithText[]>([])
 
 export const isPanning = ref(false)
 export const { space: isSpacePressed, escape: isEscPressed } = useMagicKeys()

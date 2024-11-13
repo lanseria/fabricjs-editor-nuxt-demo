@@ -14,12 +14,16 @@ async function onPageAdd() {
 }
 
 async function onPageDelete(item: PageRecord) {
+  const { code, msg } = await deletePage(item.id)
+  if (code) {
+    Message.warning(msg)
+    return
+  }
   if (item.id === selectPageId.value) {
     initBackgroundImageBlobUrl()
     setBackgroundImage()
     onPolygonClear()
   }
-  await deletePage(item.id)
   await fetchPageList()
 }
 function onPageEdit(record: PageRecord) {
@@ -33,6 +37,7 @@ async function onSelect(record: PageRecord) {
     setBackgroundImageBlobUrl(blobUrl)
     setBackgroundImage()
   }
+  onPolygonClear()
   record.children.forEach((item) => {
     onPolygonInitAdd(item, false)
   })
@@ -47,6 +52,7 @@ onMounted(async () => {
   }
 })
 onUnmounted(() => {
+  polygonWithTextList.value = []
   console.warn('[index.vue]:', 'onUnmounted')
 })
 </script>

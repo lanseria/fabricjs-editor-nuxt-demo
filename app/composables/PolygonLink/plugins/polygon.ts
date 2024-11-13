@@ -123,8 +123,8 @@ function onMouseDown(event: fabric.IEvent) {
     const p2 = points[points.length - 1]
 
     const line = new fabric.Line([p1!.x, p1!.y, p2!.x, p2!.y], {
-      stroke: '#43CF7C',
-      strokeWidth: 6,
+      stroke: DRAW_STROKE_COLOR,
+      strokeWidth: DRAW_STROKE_WIDTH,
       selectable: false,
       evented: false,
     })
@@ -152,9 +152,9 @@ function onMouseMove(event: fabric.IEvent) {
   // Create temporary polygon
   const tempPoints = [...points, new fabric.Point(pointer.x, pointer.y)]
   activePolygon = new fabric.Polygon(tempPoints, {
-    fill: '#43CF7C4C',
-    stroke: '#43CF7C',
-    strokeWidth: 6,
+    fill: DRAW_FILL_COLOR,
+    stroke: DRAW_STROKE_COLOR,
+    strokeWidth: DRAW_STROKE_WIDTH,
     selectable: false,
     evented: false,
   })
@@ -176,7 +176,7 @@ function onDoubleClick(_event: fabric.IEvent) {
   const absolutePoints = adjustPoints(polygonPoints, boundingBox)
   const name = `polygon-${nanoid(4)}`
 
-  const polygonWithText = new PolygonWithText(canvas, {
+  onPolygonInitAdd({
     points: absolutePoints,
     left: boundingBox.left,
     top: boundingBox.top,
@@ -196,12 +196,9 @@ function onDoubleClick(_event: fabric.IEvent) {
   // // 移除所有点
   canvas.getObjects().filter(obj => obj.name === 'point').forEach(obj => canvas.remove(obj))
 
-  emitter.emit('polygon:created', polygonWithText.options.name)
+  emitter.emit('polygon:created', name)
   // canvas.renderAll()
   triggerRef(canvasFabric)
-  // 添加到对象列表
-  polygonWithTextList.value.push(polygonWithText)
-  onLayerAdd(polygonWithText.options)
   // Reset drawing state
   stopPolygonDrawing()
 }
@@ -216,6 +213,7 @@ export function onPolygonClear() {
 }
 
 export function onPolygonInitAdd(options: PolygonWithTextOptions, selectable = true) {
+  // console.log('[onPolygonInitAdd]', polygonWithTextList.value.length)
   if (canvasFabric.value === undefined) {
     console.error('请先初始化画布')
     return

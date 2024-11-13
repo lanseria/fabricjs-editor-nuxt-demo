@@ -132,10 +132,10 @@ export function initCanvasBasicPlugin(canvasRef: ShallowRef<HTMLCanvasElement | 
   // 设置控制器样式
   fabric.Object.prototype.set({
     transparentCorners: false,
-    cornerColor: 'blue',
-    cornerStrokeColor: 'blue',
-    borderColor: 'blue',
-    cornerSize: 10,
+    cornerColor: DRAW_STROKE_COLOR,
+    cornerStrokeColor: DRAW_STROKE_COLOR,
+    borderColor: DRAW_STROKE_COLOR,
+    cornerSize: 4,
     padding: 10,
     cornerStyle: 'circle',
     borderDashArray: [3, 3],

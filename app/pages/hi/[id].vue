@@ -3,6 +3,7 @@ import { canvasIsReady } from '~/composables/store'
 
 const route = useRoute<'hi-id'>()
 const router = useRouter()
+const { loading, setLoading } = useLoading(false)
 const id = computed(() => route.params.id)
 
 function onLayerDelete(record: PolygonWithTextOptions) {
@@ -18,6 +19,7 @@ function onLayerEdit(record: PolygonWithTextOptions) {
   emitter.emit('polygon:updated', { name: record.name, id: record.riskAnalysisObjectId })
 }
 async function onPageLayerSave() {
+  setLoading(true)
   let backgroundImageUrl = null
   if (backgroundImageBlobUrl.value) {
     const uploadFileFormData = new FormData()
@@ -39,7 +41,7 @@ async function onPageLayerSave() {
     children: globalLayerList.value,
   }
   await putPage(formData)
-  await fetchPageDetail(id.value)
+  setLoading(false)
   router.back()
 }
 function toggleDrawMode() {
@@ -59,11 +61,14 @@ function toggleDrawMode() {
   // }
 }
 onMounted(async () => {
-  console.warn('[id.vue]:', 'onMounted', canvasIsReady.value)
+  setLoading(true)
+  // console.warn('[id.vue]:', 'onMounted', canvasIsReady.value)
   await until(canvasIsReady).toBe(true)
   await until(canvasFabric).not.toBe(undefined)
-  console.warn('[id.vue]:', 'onPolygonInitAdd')
+  // console.warn('[id.vue]:', 'onPolygonInitAdd')
+  // console.warn('[id.vue]:', 'fetchPageDetail', globalPageDetail.value?.children.length)
   await fetchPageDetail(id.value)
+  // console.warn('[id.vue]:', 'fetchPageDetail', globalPageDetail.value?.children.length)
   if (globalPageDetail.value === null) {
     return
   }
@@ -75,63 +80,67 @@ onMounted(async () => {
   globalLayerList.value.forEach((item) => {
     onPolygonInitAdd(item)
   })
+  setLoading(false)
 })
 
 onUnmounted(() => {
   globalPageDetail.value = null
+  polygonWithTextList.value = []
   console.warn('[id.vue]:', 'onUnmounted')
 })
 </script>
 
 <template>
-  <div class="h-full flex shrink grow basis-0 overflow-hidden">
-    <div class="flex flex-col justify-between border-r-1px border-gray-1">
-      <div class="flex flex-col items-center">
-        <ToolBtn icon-name="i-carbon-cursor-1" tooltip-name="移动" :active="isSelectMode" @click="setToolActive('select')" />
-        <ToolBtn icon-name="i-carbon-area-custom" tooltip-name="多边形" :active="isDrawingMode" @click="toggleDrawMode()" />
-        <BackgroundBtn />
-        <ToolBtn icon-name="i-carbon-zoom-pan" tooltip-name="平移" :active="isPanMode" @click="setToolActive('pan')" />
-        <PolygonLinkBindRiskAnalysisObjectModal />
-      </div>
-      <div class="flex flex-col items-center" />
-    </div>
-    <div class="w-300px flex-none border-r-1px border-gray-1">
-      <div class="flex items-center justify-between gap-2 border-b-1px border-gray-1 px-4 py-2">
-        <div class="flex items-center">
-          <div class="text-14px font-bold">
-            {{ globalPageDetail?.name }}
-          </div>
-          <div>
-            图层
-          </div>
+  <ASpin :loading="loading" tip="加载中，请稍后" class="h-full w-full">
+    <div class="h-full flex shrink grow basis-0 overflow-hidden">
+      <div class="flex flex-col justify-between border-r-1px border-gray-1">
+        <div class="flex flex-col items-center">
+          <ToolBtn icon-name="i-carbon-cursor-1" tooltip-name="移动" :active="isSelectMode" @click="setToolActive('select')" />
+          <ToolBtn icon-name="i-carbon-area-custom" tooltip-name="多边形" :active="isDrawingMode" @click="toggleDrawMode()" />
+          <BackgroundBtn />
+          <ToolBtn icon-name="i-carbon-zoom-pan" tooltip-name="平移" :active="isPanMode" @click="setToolActive('pan')" />
+          <PolygonLinkBindRiskAnalysisObjectModal />
         </div>
-        <ToolBtn icon-name="i-carbon-save text-blue-6" tooltip-name="保存" @click="onPageLayerSave()" />
+        <div class="flex flex-col items-center" />
       </div>
-      <div class="flex flex-col">
-        <AEmpty v-if="globalLayerList.length === 0" />
-        <div v-for="item in globalLayerList" :key="item.name" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">
-          <div class="flex flex-col items-start gap-1">
+      <div class="w-300px flex-none border-r-1px border-gray-1">
+        <div class="flex items-center justify-between gap-2 border-b-1px border-gray-1 px-4 py-2">
+          <div class="flex items-center">
+            <div class="text-14px font-bold">
+              {{ globalPageDetail?.name }}
+            </div>
             <div>
-              {{ item.text }}
-            </div>
-            <div
-              v-if="item.riskAnalysisObjectLevel"
-              class="inline-flex items-center justify-center rounded px-2 py-1 text-12px font-bold"
-              :style="{
-                backgroundColor: levelColorMap[item.riskAnalysisObjectLevel],
-                color: levelTextColorMap[item.riskAnalysisObjectLevel],
-              }"
-            >
-              {{ riskLevelStatusMap[item.riskAnalysisObjectLevel] }}
+              图层
             </div>
           </div>
-          <div class="flex">
-            <ToolBtn icon-name="i-carbon-edit text-blue-6" tooltip-name="编辑" @click="onLayerEdit(item)" />
-            <ToolBtn icon-name="i-carbon-trash-can text-red-6" tooltip-name="删除" @click="onLayerDelete(item)" />
+          <ToolBtn icon-name="i-carbon-save text-blue-6" tooltip-name="保存" @click="onPageLayerSave()" />
+        </div>
+        <div class="flex flex-col">
+          <AEmpty v-if="globalLayerList.length === 0" />
+          <div v-for="item in globalLayerList" :key="item.name" class="flex items-center justify-between px-4 py-2 hover:bg-gray-50">
+            <div class="flex flex-col items-start gap-1">
+              <div>
+                {{ item.text }}
+              </div>
+              <div
+                v-if="item.riskAnalysisObjectLevel"
+                class="inline-flex items-center justify-center rounded px-2 py-1 text-12px font-bold"
+                :style="{
+                  backgroundColor: levelColorMap[item.riskAnalysisObjectLevel],
+                  color: levelTextColorMap[item.riskAnalysisObjectLevel],
+                }"
+              >
+                {{ riskLevelStatusMap[item.riskAnalysisObjectLevel] }}
+              </div>
+            </div>
+            <div class="flex">
+              <ToolBtn icon-name="i-carbon-edit text-blue-6" tooltip-name="编辑" @click="onLayerEdit(item)" />
+              <ToolBtn icon-name="i-carbon-trash-can text-red-6" tooltip-name="删除" @click="onLayerDelete(item)" />
+            </div>
           </div>
         </div>
       </div>
+      <PolygonLink />
     </div>
-    <PolygonLink />
-  </div>
+  </ASpin>
 </template>
