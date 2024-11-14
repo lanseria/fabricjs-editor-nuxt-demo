@@ -9,6 +9,7 @@ const showBack = computed(() => route.path !== '/')
     <div class="flex items-center justify-between gap-2 border-b-1px border-gray-1 p-2">
       <div class="flex items-center justify-start gap-2">
         <ToolBtn v-if="showBack" icon-name="i-carbon-arrow-left" tooltip-name="返回" @click="$router.back()" />
+        <img src="/favicon.svg" class="h-32px w-32px">
         <div class="text-20px">
           风险四色图
         </div>

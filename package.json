@@ -1,7 +1,7 @@
 {
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@9.12.3",
+  "packageManager": "pnpm@9.13.0",
   "scripts": {
     "build": "nuxi build",
     "dev": "nuxi dev",
@@ -30,7 +30,7 @@
     "consola": "^3.2.3",
     "eslint": "^9.14.0",
     "eslint-plugin-format": "^0.1.2",
-    "fabric": "^5.4.0",
+    "fabric": "^5.4.1",
     "mitt": "^3.0.1",
     "nanoid": "^5.0.8",
     "nuxt": "^3.14.159",

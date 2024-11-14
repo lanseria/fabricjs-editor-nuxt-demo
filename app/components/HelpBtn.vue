@@ -4,7 +4,7 @@
   <ATrigger trigger="click" :unmount-on-close="false">
     <ToolBtn icon-name="i-carbon-help" tooltip-name="帮助" />
     <template #content>
-      <div class="w-300px border-1px border-gray-1 bg-white px-4 py-2 shadow">
+      <div class="w-300px border-1px border-gray-1 bg-white px-4 py-6 shadow">
         <div class="text-14px font-bold">
           帮助提示
         </div>
@@ -25,6 +25,12 @@
           <div class="flex items-center justify-between gap-2">
             <ToolBtn icon-name="i-carbon-area-custom text-blue-6" tooltip-name="绘制区域" />
             <div>绘制区域</div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <ToolBtn icon-name="i-carbon-zoom-pan text-blue-6" tooltip-name="移动对象" />
+            <div>自由移动</div>
           </div>
         </div>
         <div class="flex flex-col gap-2">

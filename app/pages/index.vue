@@ -49,6 +49,7 @@ onMounted(async () => {
   console.warn('[index.vue]:', 'onMounted')
   await until(canvasIsReady).toBe(true)
   await until(canvasFabric).not.toBe(undefined)
+  setToolActive('pan')
   await fetchPageList()
   if (globalPageList.value.length > 0) {
     onSelect(globalPageList.value[0]!)
