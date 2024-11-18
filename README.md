@@ -1,80 +1,72 @@
-<p align="center">
-<img src="https://user-images.githubusercontent.com/11247099/140462375-7b7ac4db-35b7-453c-8a05-13d8d20282c4.png" width="600"/>
-</p>
+# Certificate Design Project
 
-<h2 align="center">
-<a href="https://github.com/antfu/vitesse">Vitesse</a> for Nuxt 3
-</h2><br>
+## Project Title
 
-<p align="center">
-<br>
-<a href="https://vitesse-nuxt3.netlify.app/">🖥 Online Preview</a>
-<br><br>
-<a href="https://stackblitz.com/github/antfu/vitesse-nuxt"><img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt=""></a>
-</p>
+Certificate Design Tool
+
+## Project Description
+
+This project aims to provide a user-friendly certificate design tool that allows users to customize and create personalized certificates. The tool supports various features, including reset, preview, import/export, and is designed to help users easily create and manage certificates.
+
+## Branches
+
+- **tp-ui**: This branch includes all features of the certificate design tool, providing a comprehensive solution for users.
+- **bst-ui**: This branch is another Fabric.js application project that allows users to draw areas on images, showcasing different functionalities.
+
+## Technology Stack
+
+- **Nuxt 3**: A powerful framework based on Vue.js that enables server-side rendering and static site generation, providing an intuitive development experience.
+- **Fabric.js@5**: A JavaScript library for working with HTML5 canvas, allowing for rich interactive graphics and easy manipulation of objects on the canvas.
 
 ## Features
 
-- 💚 [Nuxt 3](https://nuxt.com/) - SSR, ESR, File-based routing, components auto importing, modules, etc.
+- **Reset/Preview/Import/Export**: Simulates save and retrieve functionality.
+- **Canvas Size Setting**: Users can adjust the canvas size according to their needs.
+- **Set Certificate Background**: Choose or customize the background of the certificate.
+- **Support Custom Images**: Users can upload their own images as part of the certificate.
+- **Certificate Template Text Information**: Provides preset text information for users to choose from.
+- **Custom Text Information**: Allows users to input and edit their own text information.
+- **Font Customization**: Customize the color, font size, and style for individual text elements.
 
-- ⚡️ Vite - Instant HMR.
+## Installation and Running
 
-- 🎨 [UnoCSS](https://github.com/unocss/unocss) - The instant on-demand atomic CSS engine.
+1. Clone the project to your local machine:
+   ```bash
+   git clone https://github.com/lanseria/fabricjs-editor-nuxt-demo
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd fabricjs-editor-nuxt-demo
+   ```
+3. Install dependencies (if any):
+   ```bash
+   pnpm install
+   ```
+4. Start the application:
+   ```bash
+   pnpm dev
+   ```
 
-- 😃 Use icons from any icon sets in Pure CSS, powered by [UnoCSS](https://github.com/unocss/unocss).
+## How to Use the Project
 
-- 🔥 The `<script setup>` syntax.
+1. Open the application and select the canvas size.
+2. Set the background and upload custom images.
+3. Input certificate template text information and custom text information.
+4. Adjust font color, size, and style as needed.
+5. Use the "Preview" feature to view the final effect and make adjustments if necessary.
+6. Once completed, you can choose to export the certificate or save the project.
 
-- 🍍 [State Management via Pinia](https://github.com/vuejs/pinia), see [./app/composables/user.ts](./app/composables/user.ts).
+## License
 
-- 📑 [Layout system](./app/layouts).
+This project is licensed under the MIT License. For more details, please refer to the LICENSE file.
 
-- 📥 APIs auto importing - for Composition API, VueUse and custom composables.
+## Contact Information
 
-- 🏎 Zero-config cloud functions and deploy.
+If you have any questions or suggestions, please contact me at: [zhangchao564265135@hotmail.com].
 
-- 🦾 TypeScript, of course.
+## Language Switch
 
-- 📲 [PWA](https://github.com/vite-pwa/nuxt) with offline support and auto-update behavior.
+You can switch between Chinese and English README files at this link: [中文](./README.CN.md)
 
-## Plugins
-
-### Nuxt Modules
-
-- [VueUse](https://github.com/vueuse/vueuse) - collection of useful composition APIs.
-- [ColorMode](https://github.com/nuxt-modules/color-mode) - dark and Light mode with auto detection made easy with Nuxt.
-- [UnoCSS](https://github.com/unocss/unocss) - the instant on-demand atomic CSS engine.
-- [Pinia](https://github.com/vuejs/pinia) - intuitive, type safe, light and flexible Store for Vue.
-- [VitePWA](https://github.com/vite-pwa/nuxt) - zero-config PWA Plugin for Nuxt 3.
-- [DevTools](https://github.com/nuxt/devtools) - unleash Nuxt Developer Experience.
-
-## IDE
-
-We recommend using [VS Code](https://code.visualstudio.com/) with [Volar](https://github.com/johnsoncodehk/volar) to get the best experience (You might want to disable [Vetur](https://vuejs.github.io/vetur/) if you have it).
-
-## Variations
-
-- [vitesse](https://github.com/antfu/vitesse) - Opinionated Vite Starter Template
-- [vitesse-lite](https://github.com/antfu/vitesse-lite) - Lightweight version of Vitesse
-- [vitesse-nuxt-bridge](https://github.com/antfu/vitesse-nuxt-bridge) - Vitesse for Nuxt 2 with Bridge
-- [vitesse-webext](https://github.com/antfu/vitesse-webext) - WebExtension Vite starter template
-
-## Try it now!
-
-### Online
-
-<a href="https://stackblitz.com/github/antfu/vitesse-nuxt"><img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt=""></a>
-
-### GitHub Template
-
-[Create a repo from this template on GitHub](https://github.com/antfu/vitesse-nuxt/generate).
-
-### Clone to local
-
-If you prefer to do it manually with the cleaner git history
-
-```bash
-npx degit antfu/vitesse-nuxt my-nuxt-app
-cd my-nuxt-app
-pnpm i # If you don't have pnpm installed, run: npm install -g pnpm
-```
+Citations:
+https://www.freecodecamp.org/news/how-to-write-a-good-readme-file/
