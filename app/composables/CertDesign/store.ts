@@ -1,8 +1,8 @@
-import type { fabric } from 'fabric'
+import type { Canvas, FabricObject } from 'fabric'
 
 export const fabricLoadedFonts = new Set<string>()
 
-export const fabricCanvas = shallowRef<fabric.Canvas>()
+export const fabricCanvas = shallowRef<Canvas>()
 watchEffect(() => {
   const objectList = fabricCanvas.value?.getObjects()
   if (objectList?.length !== 0) {
@@ -17,7 +17,7 @@ export const fabricCanvasWrapSize = useLocalStorage('fabricCanvasWrapSize', { wi
 // workspace size
 export const fabricCanvasWorkspaceSize = ref({ width: WORKSPACE_WIDTH, height: WORKSPACE_HEIGHT })
 
-export const fabricCanvasActiveObj = ref<fabric.Object>()
+export const fabricCanvasActiveObj = ref<FabricObject>()
 
 export const fabricCanvasActiveObjProps = ref<CanvasElementObjectProps>(initCanvasElementObjectProps())
 

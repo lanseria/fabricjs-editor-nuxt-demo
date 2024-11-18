@@ -1,3 +1,5 @@
+import type { TOriginX, TOriginY } from 'fabric'
+
 export const WORKSPACE_WIDTH = 1920
 export const WORKSPACE_HEIGHT = 1080
 export const WORKSPACE_ID = 'workspace'
@@ -33,8 +35,8 @@ export const DEFAULT_TEXT_OPTIONS = {
   centeredScaling: true, // 文本居中
   lockScalingFlip: true, // 锁定翻转
   lockRotation: true, // 锁定旋转
-  originX: 'left',
-  originY: 'bottom',
+  originX: 'left' as TOriginX,
+  originY: 'bottom' as TOriginY,
 }
 /**
  * 预览图片配置

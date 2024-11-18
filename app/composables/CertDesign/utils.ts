@@ -1,4 +1,5 @@
-import { fabric } from 'fabric'
+import type { Rect } from 'fabric'
+import { iMatrix, Point } from 'fabric'
 import FontFaceObserver from 'fontfaceobserver'
 
 export function utilFabricGetCanvasInstance() {
@@ -11,7 +12,7 @@ export function utilFabricGetCanvasInstance() {
 
 export function utilFabricGetWorkspaceInstance() {
   const canvas = utilFabricGetCanvasInstance()
-  const workspace = canvas.getObjects().find(item => item.name === WORKSPACE_ID)
+  const workspace = canvas.getObjects().find((item: any) => item.name === WORKSPACE_ID)
   if (!workspace)
     throw new Error('workspace is null')
   return {
@@ -74,8 +75,8 @@ export function utilFabricSetCanvasSize() {
 export function utilFabricSetCanvasZoom(scale: number) {
   const canvas = utilFabricGetCanvasInstance()
   const center = canvas.getCenter()
-  canvas.setViewportTransform(fabric.iMatrix.concat())
-  canvas.zoomToPoint(new fabric.Point(center.left, center.top), scale)
+  canvas.setViewportTransform(iMatrix.concat())
+  canvas.zoomToPoint(new Point(center.left, center.top), scale)
   console.warn('[util.ts]:', '设置Canvas缩放', scale)
 }
 /**
@@ -108,7 +109,7 @@ function utilFabricSetWorkspaceCenter() {
  */
 function utilFabricFlipWorkspace() {
   const { workspace, canvas } = utilFabricGetWorkspaceInstance()
-  workspace.clone((cloned: fabric.Rect) => {
+  workspace.clone((cloned: Rect) => {
     canvas.clipPath = cloned
     canvas.requestRenderAll()
   })
@@ -193,7 +194,7 @@ export async function utilFabricGetCanvasExportOption() {
   const workspaceLeft = workspace.left!
   const workspaceTop = workspace.top!
   const elementList: CanvasElementObjectProps[] = []
-  canvas.getObjects().forEach((item) => {
+  canvas.getObjects().forEach((item: any) => {
     if (item.id !== WORKSPACE_ID && item.id !== BACKGROUND_ID) {
       item.visible = false
       // 如果为自定义字符串，则使用text字段
@@ -218,7 +219,7 @@ export async function utilFabricGetCanvasExportOption() {
   const { url } = await utilFabricCanvasToImageOption()
   const backgroundImageBase64 = url
 
-  canvas.getObjects().forEach((item) => {
+  canvas.getObjects().forEach((item: any) => {
     if (item.id !== WORKSPACE_ID && item.id !== BACKGROUND_ID)
       item.visible = true
   })

@@ -5,6 +5,7 @@ declare global {
        * 标识
        */
       id?: string | undefined
+      name?: string | undefined
       text?: string | undefined
       zoomX?: number | undefined
       url?: string | undefined

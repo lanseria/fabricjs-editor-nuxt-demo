@@ -1,6 +1,5 @@
-import type { Transform } from 'fabric/fabric-impl'
 import type { ShallowRef } from 'vue'
-import { fabric } from 'fabric'
+import { Canvas, Control, FabricImage, FabricObject, FabricText, IText, Rect, type Transform } from 'fabric'
 import { nanoid } from 'nanoid'
 
 export function initCanvasElementObjectProps(): CanvasElementObjectProps {
@@ -46,7 +45,7 @@ export function initFabricSelectEvent() {
 export function initFabricCanvas(canvasRef: ShallowRef<HTMLCanvasElement | null>) {
   if (canvasRef.value) {
     const canvas = canvasRef.value
-    fabricCanvas.value = new fabric.Canvas(canvas, {
+    fabricCanvas.value = new Canvas(canvas, {
       selection: true,
       preserveObjectStacking: true,
       fireRightClick: true, // 启用右键，button的数字为3
@@ -87,7 +86,7 @@ export function initFabricDeleteControl() {
     ctx: CanvasRenderingContext2D,
     left: number,
     top: number,
-    _fabricObject: fabric.Object,
+    _fabricObject: FabricObject,
   ) {
     // console.warn('[util.ts]:', '绘制删除图标', left, top, fabricObject)
     const iconSize = 24 // 控制图标大小
@@ -99,7 +98,7 @@ export function initFabricDeleteControl() {
   function deleteObject(_eventData: MouseEvent, _transformData: Transform, _x: number, _y: number) {
     const canvas = utilFabricGetCanvasInstance()
     const activeObjects = canvas.getActiveObjects()
-    activeObjects.forEach((obj) => {
+    activeObjects.forEach((obj: any) => {
       canvas.remove(obj)
     })
     canvas.discardActiveObject()
@@ -109,7 +108,7 @@ export function initFabricDeleteControl() {
   }
 
   // 添加删除控件到 Fabric.js 控制对象
-  fabric.Object.prototype.controls.deleteControl = new fabric.Control({
+  FabricObject.prototype.controls.deleteControl = new Control({
     x: 0.5,
     y: -0.5,
     offsetY: -16,
@@ -125,7 +124,7 @@ export function initFabricWorkspace() {
     return
   const canvas = fabricCanvas.value
   const { width, height } = fabricCanvasWorkspaceSize.value
-  const workspace = new fabric.Rect({
+  const workspace = new Rect({
     fill: 'rgba(255,255,255,1)',
     width,
     height,
@@ -149,169 +148,160 @@ export function onFabricCanvasWorkspaceResize() {
   utilFabricSetWorkspaceZoom(scale)
 }
 
-export function onFabricSetBackground(url: string): Promise<fabric.Image> {
-  return new Promise((resolve, reject) => {
-    fabric.Image.fromURL(url, async (img) => {
-      if (img) {
-        const { workspace, canvas } = utilFabricGetWorkspaceInstance()
-        // 填充背景
-        // 计算矩形和图片的宽高比
-        const rectAspectRatio = workspace.width! / workspace.height!
-        const imgAspectRatio = img.width! / img.height!
+export async function onFabricSetBackground(url: string): Promise<FabricImage> {
+  const img = await FabricImage.fromURL(url)
+  if (img) {
+    const { workspace, canvas } = utilFabricGetWorkspaceInstance()
+    // 填充背景
+    // 计算矩形和图片的宽高比
+    const rectAspectRatio = workspace.width! / workspace.height!
+    const imgAspectRatio = img.width! / img.height!
 
-        // 根据宽高比调整图片尺寸和位置
-        if (imgAspectRatio > rectAspectRatio) {
-          // 图片的宽高比较大，以矩形的高度为基准进行缩放
-          img.scaleToHeight(workspace.height!)
-        }
-        else {
-          // 图片的宽高比较小，以矩形的宽度为基准进行缩放
-          img.scaleToWidth(workspace.width!)
-        }
-
-        img.set({
-          id: BACKGROUND_ID,
-          name: BACKGROUND_ID,
-          left: workspace.left,
-          top: workspace.top,
-        })
-        // 移除之前的背景图片
-        const previousBackground = canvas.getObjects().find(obj => obj.name === BACKGROUND_ID)
-        if (previousBackground) {
-          canvas.remove(previousBackground)
-        }
-
-        canvas.add(img)
-        // 先放置在最底层
-        canvas.sendToBack(img)
-        // 再向上移动一层
-        canvas.bringForward(img, false)
-        canvas.renderAll()
-        triggerRef(fabricCanvas)
-        resolve(img)
-      }
-      else {
-        reject(new Error('img is null'))
-      }
-    })
-  })
-}
-
-export function onFabricAddPhoto(url: string): Promise<fabric.Image> {
-  return new Promise((resolve, reject) => {
-    fabric.Image.fromURL(url, async (img) => {
-      if (img) {
-        const { canvas, workspace } = utilFabricGetWorkspaceInstance()
-        const id = nanoid(4) // 计算图像应该缩放的比例,使其完全显示在画布中
-        const { width, height } = fabricCanvasWorkspaceSize.value
-        const scaleRatio = Math.min(width / img.width!, height / img.height!) * 0.8
-        img.set({
-          id: `${CUSTOM_IMAGE_ID_PREFIX}${id}`,
-          name: `${CUSTOM_IMAGE_ID_PREFIX}${id}`,
-          url,
-          left: workspace.left! + (workspace.width! / 2) - (img.width! * scaleRatio) / 2, // left
-          top: workspace.top! + (workspace.height! / 2) + (img.height! * scaleRatio) / 2, // bottom
-          scaleX: scaleRatio,
-          scaleY: scaleRatio,
-          ...DEFAULT_IMAGE_OPTIONS,
-        })
-        console.warn('[util.ts]:', '添加图片', url, img)
-        canvas.add(img)
-        // 先放置在最底层
-        canvas.sendToBack(img)
-        // 再向上移动两层
-        canvas.bringForward(img, false)
-        canvas.bringForward(img, false)
-        canvas.setActiveObject(img)
-        canvas.renderAll()
-        triggerRef(fabricCanvas)
-        resolve(img)
-      }
-      else {
-        reject(new Error('img is null'))
-      }
-    })
-  })
-}
-
-export function onAddDynamicText(record: CanvasObjects) {
-  return new Promise((resolve, reject) => {
-    const { canvas, workspace } = utilFabricGetWorkspaceInstance()
-    if (record.type === 'i-text') {
-      const id = nanoid(4)
-      const iText = new fabric.IText(record.value, {
-        ...DEFAULT_TEXT_OPTIONS,
-        editable: true,
-        id: `${record.id}_${id}`,
-        name: record.value,
-        left: workspace.left! + (record.left ?? workspace.width! / 2), // left
-        top: workspace.top! + (record.top ?? workspace.height! / 2), // bottom
-        scaleX: record.scaleX ?? 1,
-        scaleY: record.scaleY ?? 1,
-        fill: record.fill ?? DEFAULT_TEXT_FILL,
-        fontSize: record.fontSize ?? DEFAULT_FONT_SIZE,
-        fontFamily: record.fontFamily ?? DEFAULT_FONT_FAMILY,
-      })
-      canvas.add(iText)
-      canvas.setActiveObject(iText)
-      canvas.renderAll()
-      triggerRef(fabricCanvas)
-      resolve(iText)
-      // TODO: 监听更新时间并保存
-    }
-    else if (record.type === 'text') {
-      const text = new fabric.Text(record.value, {
-        ...DEFAULT_TEXT_OPTIONS,
-        id: record.id,
-        name: record.value,
-        left: workspace.left! + (record.left ?? workspace.width! / 2), // left
-        top: workspace.top! + (record.top ?? workspace.height! / 2), // bottom
-        scaleX: record.scaleX ?? 1,
-        scaleY: record.scaleY ?? 1,
-        fill: record.fill ?? DEFAULT_TEXT_FILL,
-        fontSize: record.fontSize ?? DEFAULT_FONT_SIZE,
-        fontFamily: record.fontFamily ?? DEFAULT_FONT_FAMILY,
-      })
-      canvas.add(text)
-      canvas.setActiveObject(text)
-      canvas.renderAll()
-      triggerRef(fabricCanvas)
-      resolve(text)
-    }
-    else if (record.type === 'image') {
-      let IMAGE_URL = ''
-      // 内置固定图片
-      if (CERT_IMAGE_TYPES.includes(record.id)) {
-        IMAGE_URL = CERT_IMAGE_MAP[record.id as keyof typeof CERT_IMAGE_MAP]
-      }
-      // 自定义图片 CUSTOM_IMAGE_
-      else if (record.url) {
-        IMAGE_URL = record.url // blob url
-      }
-      else {
-        throw new Error('url is null')
-      }
-      fabric.Image.fromURL(IMAGE_URL, (imgInstance) => {
-        canvas.add(imgInstance.set({
-          left: workspace.left! + (record.left ?? workspace.width! / 2), // left
-          top: workspace.top! + (record.top ?? workspace.height! / 2), // bottom
-          scaleX: record.scaleX ?? 1,
-          scaleY: record.scaleY ?? 1,
-          id: record.id,
-          name: record.value,
-          url: IMAGE_URL,
-          ...DEFAULT_IMAGE_OPTIONS,
-        }))
-        canvas.setActiveObject(imgInstance)
-        canvas.renderAll()
-        triggerRef(fabricCanvas)
-        resolve(imgInstance)
-      }, {
-        crossOrigin: 'anonymous',
-      })
+    // 根据宽高比调整图片尺寸和位置
+    if (imgAspectRatio > rectAspectRatio) {
+      // 图片的宽高比较大，以矩形的高度为基准进行缩放
+      img.scaleToHeight(workspace.height!)
     }
     else {
-      reject(new Error('type is not supported'))
+      // 图片的宽高比较小，以矩形的宽度为基准进行缩放
+      img.scaleToWidth(workspace.width!)
     }
-  })
+
+    img.set({
+      id: BACKGROUND_ID,
+      name: BACKGROUND_ID,
+      left: workspace.left,
+      top: workspace.top,
+    })
+    // 移除之前的背景图片
+    const previousBackground = canvas.getObjects().find((obj: any) => obj.name === BACKGROUND_ID)
+    if (previousBackground) {
+      canvas.remove(previousBackground)
+    }
+
+    canvas.add(img)
+    // 先放置在最底层
+    canvas.sendToBack(img)
+    // 再向上移动一层
+    canvas.bringForward(img, false)
+    canvas.renderAll()
+    triggerRef(fabricCanvas)
+    return img
+  }
+  else {
+    throw new Error('img is null')
+  }
+}
+
+export async function onFabricAddPhoto(url: string): Promise<FabricImage> {
+  const img = await FabricImage.fromURL(url)
+  if (img) {
+    const { canvas, workspace } = utilFabricGetWorkspaceInstance()
+    const id = nanoid(4) // 计算图像应该缩放的比例,使其完全显示在画布中
+    const { width, height } = fabricCanvasWorkspaceSize.value
+    const scaleRatio = Math.min(width / img.width!, height / img.height!) * 0.8
+    img.set({
+      id: `${CUSTOM_IMAGE_ID_PREFIX}${id}`,
+      name: `${CUSTOM_IMAGE_ID_PREFIX}${id}`,
+      url,
+      left: workspace.left! + (workspace.width! / 2) - (img.width! * scaleRatio) / 2, // left
+      top: workspace.top! + (workspace.height! / 2) + (img.height! * scaleRatio) / 2, // bottom
+      scaleX: scaleRatio,
+      scaleY: scaleRatio,
+      ...DEFAULT_IMAGE_OPTIONS,
+    })
+    console.warn('[util.ts]:', '添加图片', url, img)
+    canvas.add(img)
+    // 先放置在最底层
+    canvas.sendToBack(img)
+    // 再向上移动两层
+    canvas.bringForward(img, false)
+    canvas.bringForward(img, false)
+    canvas.setActiveObject(img)
+    canvas.renderAll()
+    triggerRef(fabricCanvas)
+    return img
+  }
+  else {
+    throw new Error('img is null')
+  }
+}
+
+export async function onAddDynamicText(record: CanvasObjects) {
+  const { canvas, workspace } = utilFabricGetWorkspaceInstance()
+  if (record.type === 'i-text') {
+    const id = nanoid(4)
+    const iText = new IText(record.value, {
+      ...DEFAULT_TEXT_OPTIONS,
+      editable: true,
+      id: `${record.id}_${id}`,
+      name: record.value,
+      left: workspace.left! + (record.left ?? workspace.width! / 2), // left
+      top: workspace.top! + (record.top ?? workspace.height! / 2), // bottom
+      scaleX: record.scaleX ?? 1,
+      scaleY: record.scaleY ?? 1,
+      fill: record.fill ?? DEFAULT_TEXT_FILL,
+      fontSize: record.fontSize ?? DEFAULT_FONT_SIZE,
+      fontFamily: record.fontFamily ?? DEFAULT_FONT_FAMILY,
+    })
+    canvas.add(iText)
+    canvas.setActiveObject(iText)
+    canvas.renderAll()
+    triggerRef(fabricCanvas)
+    return iText
+    // TODO: 监听更新时间并保存
+  }
+  else if (record.type === 'text') {
+    const text = new FabricText(record.value, {
+      ...DEFAULT_TEXT_OPTIONS,
+      id: record.id,
+      name: record.value,
+      left: workspace.left! + (record.left ?? workspace.width! / 2), // left
+      top: workspace.top! + (record.top ?? workspace.height! / 2), // bottom
+      scaleX: record.scaleX ?? 1,
+      scaleY: record.scaleY ?? 1,
+      fill: record.fill ?? DEFAULT_TEXT_FILL,
+      fontSize: record.fontSize ?? DEFAULT_FONT_SIZE,
+      fontFamily: record.fontFamily ?? DEFAULT_FONT_FAMILY,
+    })
+    canvas.add(text)
+    canvas.setActiveObject(text)
+    canvas.renderAll()
+    triggerRef(fabricCanvas)
+    return text
+  }
+  else if (record.type === 'image') {
+    let IMAGE_URL = ''
+    // 内置固定图片
+    if (CERT_IMAGE_TYPES.includes(record.id)) {
+      IMAGE_URL = CERT_IMAGE_MAP[record.id as keyof typeof CERT_IMAGE_MAP]
+    }
+    // 自定义图片 CUSTOM_IMAGE_
+    else if (record.url) {
+      IMAGE_URL = record.url // blob url
+    }
+    else {
+      throw new Error('url is null')
+    }
+    const imgInstance = await FabricImage.fromURL(IMAGE_URL, {
+      crossOrigin: 'anonymous',
+    })
+    canvas.add(imgInstance.set({
+      left: workspace.left! + (record.left ?? workspace.width! / 2), // left
+      top: workspace.top! + (record.top ?? workspace.height! / 2), // bottom
+      scaleX: record.scaleX ?? 1,
+      scaleY: record.scaleY ?? 1,
+      id: record.id,
+      name: record.value,
+      url: IMAGE_URL,
+      ...DEFAULT_IMAGE_OPTIONS,
+    }))
+    canvas.setActiveObject(imgInstance)
+    canvas.renderAll()
+    triggerRef(fabricCanvas)
+    return imgInstance
+  }
+  else {
+    throw new Error('type is not supported')
+  }
 }
